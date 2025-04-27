@@ -1,0 +1,68 @@
+@use 'reset';
+@use 'variables';
+@use "animations";
+
+html {
+  scroll-behavior: smooth;
+  margin: 0 !important;
+  height: 100%;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+a {
+  display: inline-block;
+}
+
+button {
+  cursor: pointer;
+  background-color: transparent;
+}
+
+body {
+  min-width: 320px;
+  position: relative;
+  overflow-x: clip !important;
+
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 1.25 !important;
+  color: var(--font);
+  font-weight: 300;
+  background-color: var(--background);
+
+  height: 100%;
+}
+
+html, body, #app {
+  height: 100%;
+}
+#app {
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  width: 100%;
+}
+
+.page {
+  background-image: url('@/shared/assets/bg/bg.webp');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  flex: 1;
+  padding: 16px;
+
+  &.home-page {
+    background-image: url('@/shared/assets/bg/home.webp');
+  }
+}
+
