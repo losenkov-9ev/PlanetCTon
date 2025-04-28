@@ -57,6 +57,7 @@ html, body, #app {
 .page {
   background-image: url('@/shared/assets/bg/bg.webp');
   @include mixins.bg-cover;
+  height: 100vh;
 
   flex: 1;
   padding: 16px;
@@ -64,5 +65,11 @@ html, body, #app {
   &.home-page {
     background-image: url('@/shared/assets/bg/home.webp');
   }
+}
+
+.title-1 {
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 600;
 }
 
