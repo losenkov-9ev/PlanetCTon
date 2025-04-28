@@ -1,6 +1,7 @@
 @use 'reset';
 @use 'variables';
 @use "animations";
+@use "mixins" as mixins;
 
 html {
   scroll-behavior: smooth;
@@ -55,9 +56,8 @@ html, body, #app {
 
 .page {
   background-image: url('@/shared/assets/bg/bg.webp');
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: cover;
+  @include mixins.bg-cover;
+
   flex: 1;
   padding: 16px;
 

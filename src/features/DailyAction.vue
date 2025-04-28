@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import UiButton from '@/shared/ui/UiButton.vue'
 
 interface DailyActionProps {
   title: string
@@ -18,23 +19,15 @@ const variantClass = computed(() => {
   <div class="daily-action-card" :class="variantClass">
     <div class="card-head">
       <div class="card-icon">
-        <img
-          :src="
-            variant === 'yellow'
-              ? '/src/shared/assets/icons/daily-1.png'
-              : '/src/shared/assets/currency/ton.webp'
-          "
-          alt=""
-        />
+        <img v-if="variant === 'yellow'" src="@/shared/assets/icons/daily-1.png" alt="" />
+        <img v-else src="@/shared/assets/currency/ton.webp" alt="" />
       </div>
       <div class="card-head-inner">
         <div class="tip">Ежедневная</div>
         <div class="card-title">{{ title }}</div>
       </div>
     </div>
-    <button class="card-button" :class="variant">
-      {{ buttonText }}
-    </button>
+    <UiButton class="card-button" :color="variant" size="sm"> {{ buttonText }}</UiButton>
     <div class="card-reward" :class="variant">
       <slot name="reward"> </slot>
     </div>
@@ -42,6 +35,7 @@ const variantClass = computed(() => {
 </template>
 
 <style lang="scss">
+@use '@/app/styles/mixins' as mixins;
 .daily-action-card {
   width: 100%;
   padding: 16px;
@@ -50,9 +44,7 @@ const variantClass = computed(() => {
   transition: background 0.3s;
   border: 1px solid #32315f;
 
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: cover;
+  @include mixins.bg-cover;
 }
 
 .variant-yellow {
@@ -106,24 +98,6 @@ const variantClass = computed(() => {
 }
 
 .card-button {
-  padding: 7px;
-  max-width: 100%;
-  width: 100%;
-  background: #ffffff;
-  border: none;
-  border-radius: 4px;
-  font-weight: 500;
-  font-size: 13px;
   margin-bottom: 10px;
-  color: #000000;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-
-  &.yellow {
-    background: #eda400;
-  }
-  &.blue {
-    background: #27aff9;
-  }
 }
 </style>

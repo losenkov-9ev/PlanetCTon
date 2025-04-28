@@ -7,12 +7,12 @@ import DailyAction from '@/features/DailyAction.vue'
 <template>
   <section class="dashboard">
     <div class="balances">
-      <BalanceCard amount="2.336" currency="$CITY" bg="/src/shared/assets/bg/city-bg.png">
+      <BalanceCard amount="2.336" currency="$CITY" bg="yellow">
         <template #icon>
           <img src="@/shared/assets/currency/city.webp" alt="" />
         </template>
       </BalanceCard>
-      <BalanceCard amount="2.336" currency="TON" bg="/src/shared/assets/bg/ton-bg.png">
+      <BalanceCard amount="2.336" currency="TON" bg="blue">
         <template #icon>
           <img src="@/shared/assets/currency/ton.webp" alt="" />
         </template>

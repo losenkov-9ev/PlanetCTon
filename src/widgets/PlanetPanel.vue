@@ -1,4 +1,6 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import UiButton from '@/shared/ui/UiButton.vue'
+</script>
 
 <template>
   <section class="planet-panel">
@@ -21,7 +23,7 @@
       </div>
     </div>
 
-    <button class="attack-button">АТАКОВАТЬ!</button>
+    <UiButton>АТАКОВАТЬ!</UiButton>
   </section>
 </template>
 
@@ -131,20 +133,5 @@
   height: 24px;
   border-radius: 50%;
   overflow: hidden;
-}
-
-/* Кнопка атаки */
-.attack-button {
-  max-width: 100%;
-  width: 100%;
-  padding: 12px;
-  background: var(--font);
-  border: none;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 13px;
-  color: #000000;
-  cursor: pointer;
-  transition: transform 0.3s ease;
 }
 </style>

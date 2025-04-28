@@ -2,14 +2,14 @@
 interface BalanceCardProps {
   currency: string
   amount: string
-  bg: string
+  bg: 'yellow' | 'blue'
 }
 
 defineProps<BalanceCardProps>()
 </script>
 
 <template>
-  <div class="balance-card" :style="{ backgroundImage: `url('${bg}')` }">
+  <div class="balance-card" :class="bg">
     <div class="balance-info">
       <div class="icon">
         <slot name="icon"></slot>
@@ -21,6 +21,7 @@ defineProps<BalanceCardProps>()
 </template>
 
 <style scoped lang="scss">
+@use '@/app/styles/mixins' as mixins;
 .balance-card {
   display: flex;
   align-items: center;
@@ -29,10 +30,16 @@ defineProps<BalanceCardProps>()
   border-radius: 8px;
   border: 1px solid #32315f;
   font-weight: 500;
+  @include mixins.bg-cover;
 
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: cover;
+  &.yellow {
+    background-image: url('@/shared/assets/bg/city-bg.png');
+  }
+
+  &.blue {
+    background-image: url('@/shared/assets/bg/ton-bg.png');
+  }
+
   color: #fff;
 
   .icon {
