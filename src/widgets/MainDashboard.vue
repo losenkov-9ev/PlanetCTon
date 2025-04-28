@@ -22,7 +22,7 @@ import DailyAction from '@/features/DailyAction.vue'
     <ComboPlanetCard />
     <div class="daily-actions">
       <DailyAction title="Транзакция" buttonText="Пополнить" variant="yellow">
-        <template #reward> Награда <span>100.000 $NEON</span> </template>
+        <template #reward> Награда <span>100 $NEON</span> </template>
       </DailyAction>
 
       <DailyAction title="Награда" buttonText="Получить" variant="blue">

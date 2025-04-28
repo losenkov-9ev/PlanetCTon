@@ -61,9 +61,26 @@ html, body, #app {
 
   flex: 1;
   padding: 16px;
+  display: flex;
+  flex-direction: column;
 
   &.home-page {
     background-image: url('@/shared/assets/bg/home.webp');
+  }
+}
+
+.scrolled-list {
+  flex: 1;
+  overflow: auto;
+  padding-bottom: 56px;
+  padding-right: 2px;
+
+  &::-webkit-scrollbar {
+    width: 2px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #4746c8;
+    border-radius: 10px;
   }
 }
 

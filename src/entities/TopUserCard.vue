@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-interface TopUser {
+export interface TopUser {
   id: number
   name: string
   avatar: string

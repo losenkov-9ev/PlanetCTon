@@ -1,5 +1,5 @@
 <script setup lang="ts">
-interface User {
+export interface User {
   id: number
   name: string
   score: string

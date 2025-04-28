@@ -1,5 +1,71 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import BalanceActionCard, { type BalanceCardData } from '@/entities/BalanceActionCard.vue'
+import CityIcon from '@/shared/assets/currency/city.webp'
+import TonIcon from '@/shared/assets/currency/ton.webp'
+import WalletConnect from '@/features/WalletConnect.vue'
+import { transactions } from '@/shared/mock/transactions.ts'
+import TransactionCard from '@/entities/TransactionCard.vue'
 
-<template><div class="balance-page page"></div></template>
+const balanceActionCards: BalanceCardData[] = [
+  {
+    id: 1,
+    name: '$CITY',
+    balance: '2.336',
+    buttonLabel: 'Пополнить',
+    icon: CityIcon,
+    variant: 'white',
+  },
+  {
+    id: 2,
+    name: 'TON',
+    balance: '2.336',
+    buttonLabel: 'Вывести',
+    icon: TonIcon,
+    variant: 'accent',
+  },
+]
+</script>
 
-<style scoped></style>
+<template>
+  <div class="balance-page page">
+    <div class="balance-title title-1">Баланс</div>
+    <div class="balance-cards">
+      <BalanceActionCard :card="balanceActionCards[0]">
+        <template #description>
+          Получи 0.005 TON <br />
+          за приглашенного друга
+        </template>
+      </BalanceActionCard>
+      <BalanceActionCard :card="balanceActionCards[1]">
+        <template #description>
+          Получи <span>0.005 TON</span> <br />
+          за приглашенного друга
+        </template>
+      </BalanceActionCard>
+    </div>
+    <div class="title-1">Кошелек</div>
+    <div class="scrolled-list">
+      <WalletConnect />
+      <div class="title-1">История транзакций</div>
+      <div class="transaction-list">
+        <TransactionCard v-for="tx in transactions" :key="tx.id" :transaction="tx" />
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.title-1 {
+  margin-bottom: 10px;
+}
+
+.balance-title {
+  text-align: center;
+}
+.balance-cards {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+</style>

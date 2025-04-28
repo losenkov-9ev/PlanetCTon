@@ -3,7 +3,7 @@ import { defineProps } from 'vue'
 
 interface UiButtonProps {
   size?: 'md' | 'sm' | 'lg'
-  color?: 'white' | 'yellow' | 'blue'
+  color?: 'white' | 'yellow' | 'blue' | 'accent'
 }
 withDefaults(defineProps<UiButtonProps>(), {
   size: 'md',
@@ -40,8 +40,15 @@ withDefaults(defineProps<UiButtonProps>(), {
   &.blue {
     background: #27aff9;
   }
+  &.accent {
+    background: var(--accent);
+  }
   &:active {
     transform: translateY(0);
+  }
+  &:disabled {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.3);
   }
 }
 </style>
