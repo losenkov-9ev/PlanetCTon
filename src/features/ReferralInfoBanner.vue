@@ -19,6 +19,7 @@
 @use '@/app/styles/mixins' as mixins;
 .referral-info-banner {
   margin-top: 10px;
+  flex: none;
   width: 100%;
   background-image: url('@/shared/assets/bg/referal-info-bg.jpg');
   border: 1px solid #32315f;

@@ -15,6 +15,7 @@
 <style scoped lang="scss">
 @use '@/app/styles/mixins' as mixins;
 .tasks-banner {
+  flex: none;
   width: 100%;
   background-image: url('@/shared/assets/bg/tasks-banner-bg.jpg');
   border: 1px solid #32315f;

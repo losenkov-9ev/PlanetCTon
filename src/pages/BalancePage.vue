@@ -44,11 +44,9 @@ const balanceActionCards: BalanceCardData[] = [
       </BalanceActionCard>
     </div>
     <div class="title-1">Кошелек</div>
-    <div class="scrolled-list">
-      <WalletConnect />
-      <div class="title-1">История транзакций</div>
-      <TransactionCard v-for="tx in transactions" :key="tx.id" :transaction="tx" />
-    </div>
+    <WalletConnect />
+    <div class="title-1">История транзакций</div>
+    <TransactionCard v-for="tx in transactions" :key="tx.id" :transaction="tx" />
   </div>
 </template>
 

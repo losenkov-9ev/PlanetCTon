@@ -64,6 +64,9 @@ html, body, #app {
   padding: 16px;
   display: flex;
   flex-direction: column;
+  overflow: auto;
+  height: 100%;
+  padding-bottom: 64px;
 
   &.home-page {
     background-image: url('@/shared/assets/bg/home.webp');

@@ -23,6 +23,7 @@ import CopyButton from '@/shared/ui/CopyButton.vue'
   border: 1px solid #32315f;
   padding: 29px 22px;
   border-radius: 20px;
+  flex: none;
   margin-bottom: 10px;
 
   p {

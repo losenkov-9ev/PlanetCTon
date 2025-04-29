@@ -33,6 +33,7 @@ defineEmits<TabsSwitcherEmits>()
 <style scoped lang="scss">
 .tabs-switcher {
   display: flex;
+  flex: none;
   justify-content: space-between;
   padding: 0 10px;
   border: 1px solid #32315f;

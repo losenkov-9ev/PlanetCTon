@@ -17,6 +17,7 @@ import UiButton from '@/shared/ui/UiButton.vue'
   padding: 24px 16px;
   background-image: url('@/shared/assets/bg/banner-bg.jpg');
   @include mixins.bg-cover;
+  flex: none;
   border-radius: 20px;
   display: flex;
   flex-direction: column;
