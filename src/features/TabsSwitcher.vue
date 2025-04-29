@@ -7,6 +7,7 @@ export interface TabItem {
 interface TabsSwitcherProps {
   tabs: TabItem[]
   modelValue: string
+  centered?: boolean
 }
 
 interface TabsSwitcherEmits {
@@ -18,7 +19,7 @@ defineEmits<TabsSwitcherEmits>()
 </script>
 
 <template>
-  <div class="tabs-switcher">
+  <div class="tabs-switcher" :class="{ centered }">
     <button
       v-for="tab in tabs"
       :key="tab.id"
@@ -41,6 +42,16 @@ defineEmits<TabsSwitcherEmits>()
   position: relative;
   backdrop-filter: blur(4px);
   background-color: rgba(50, 49, 95, 0.1);
+
+  &.centered {
+    justify-content: center;
+    gap: 0px;
+    .tab {
+      min-width: 90px;
+      width: auto;
+      flex: none;
+    }
+  }
 }
 
 /* Одна вкладка */

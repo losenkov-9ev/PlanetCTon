@@ -5,6 +5,9 @@ import TonIcon from '@/shared/assets/currency/ton.webp'
 import WalletConnect from '@/features/WalletConnect.vue'
 import { transactions } from '@/shared/mock/transactions.ts'
 import TransactionCard from '@/entities/TransactionCard.vue'
+import UiModal from '@/shared/ui/UiModal.vue'
+import { ref, watch } from 'vue'
+import WithdrawalModal from '@/features/modals/WithdrawalModal.vue'
 
 const balanceActionCards: BalanceCardData[] = [
   {
@@ -24,19 +27,30 @@ const balanceActionCards: BalanceCardData[] = [
     variant: 'accent',
   },
 ]
+
+const showWithdrawal = ref<boolean>(false)
+
+function handleCardAction(cardId: number) {
+  console.log(cardId)
+  if (cardId === 2) {
+    showWithdrawal.value = true
+  } else {
+    //   ...
+  }
+}
 </script>
 
 <template>
   <div class="balance-page page">
     <div class="balance-title title-1">Баланс</div>
     <div class="balance-cards">
-      <BalanceActionCard :card="balanceActionCards[0]">
+      <BalanceActionCard :card="balanceActionCards[0]" @action="handleCardAction">
         <template #description>
           Получи 0.005 TON <br />
           за приглашенного друга
         </template>
       </BalanceActionCard>
-      <BalanceActionCard :card="balanceActionCards[1]">
+      <BalanceActionCard :card="balanceActionCards[1]" @action="handleCardAction">
         <template #description>
           Получи <span>0.005 TON</span> <br />
           за приглашенного друга
@@ -48,6 +62,9 @@ const balanceActionCards: BalanceCardData[] = [
     <div class="title-1">История транзакций</div>
     <TransactionCard v-for="tx in transactions" :key="tx.id" :transaction="tx" />
   </div>
+  <UiModal v-model="showWithdrawal" title="Вывести баланс">
+    <WithdrawalModal />
+  </UiModal>
 </template>
 
 <style scoped>

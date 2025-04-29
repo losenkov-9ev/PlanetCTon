@@ -1,5 +1,11 @@
 <script setup lang="ts">
 import UiButton from '@/shared/ui/UiButton.vue'
+import UiModal from '@/shared/ui/UiModal.vue'
+
+import { ref } from 'vue'
+import AttackPlanetModal from '@/features/modals/AttackPlanetModal.vue'
+
+const show = ref<boolean>(false)
 </script>
 
 <template>
@@ -23,7 +29,10 @@ import UiButton from '@/shared/ui/UiButton.vue'
       </div>
     </div>
 
-    <UiButton>АТАКОВАТЬ!</UiButton>
+    <UiButton @click="show = true">АТАКОВАТЬ!</UiButton>
+    <UiModal v-model="show" title="Атаковать планету">
+      <AttackPlanetModal />
+    </UiModal>
   </section>
 </template>
 

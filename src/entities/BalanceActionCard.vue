@@ -15,6 +15,15 @@ interface BalanceActionCardProps {
 }
 
 const { card } = defineProps<BalanceActionCardProps>()
+const emit = defineEmits<{
+  (e: 'action', cardId: number): void
+}>()
+
+// обработчик клика по кнопке
+function onButtonClick() {
+  // эмитим событие и передаём туда id карточки
+  emit('action', card.id)
+}
 </script>
 
 <template>
@@ -29,7 +38,7 @@ const { card } = defineProps<BalanceActionCardProps>()
     <div class="balance-description">
       <slot name="description"></slot>
     </div>
-    <UiButton class="balance-action" size="sm" :color="card.variant">
+    <UiButton @click="onButtonClick" class="balance-action" size="sm" :color="card.variant">
       {{ card.buttonLabel }}
     </UiButton>
   </div>
