@@ -15,9 +15,7 @@ import ReferralCard from '@/entities/ReferralCard.vue'
     <ReferralInfoBanner />
 
     <h2 class="title-1">Ваши рефералы</h2>
-    <div class="referral-list scrolled-list">
-      <ReferralCard v-for="referral in referrals" :key="referral.id" :referral="referral" />
-    </div>
+    <ReferralCard v-for="referral in referrals" :key="referral.id" :referral="referral" />
   </div>
 </template>
 

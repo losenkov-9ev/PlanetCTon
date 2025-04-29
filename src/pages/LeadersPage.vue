@@ -24,9 +24,7 @@ const tabs = [
       <TopUserCard v-for="user in top3Users" :key="user.id" :user="user" />
     </div>
     <h2 class="leaders-title title-1">Топ пользователей</h2>
-    <div class="user-list scrolled-list">
-      <UserCard v-for="user in topUsers" :key="user.id" :user="user" />
-    </div>
+    <UserCard v-for="user in topUsers" :key="user.id" :user="user" />
   </div>
 </template>
 

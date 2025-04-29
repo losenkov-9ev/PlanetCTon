@@ -7,12 +7,10 @@ import TaskCard from '@/entities/TaskCard/TaskCard.vue'
 <template>
   <div class="tasks-page page">
     <TasksBanner />
-    <div class="tasks-list scrolled-list">
-      <h2 class="title-1">Ежедневные задания</h2>
-      <TaskCard v-for="task in dailyTasks" :key="task.id" :task="task" />
-      <h2 class="title-1">Список заданий</h2>
-      <TaskCard v-for="task in otherTasks" :key="task.id" :task="task" />
-    </div>
+    <h2 class="title-1">Ежедневные задания</h2>
+    <TaskCard v-for="task in dailyTasks" :key="task.id" :task="task" />
+    <h2 class="title-1">Список заданий</h2>
+    <TaskCard v-for="task in otherTasks" :key="task.id" :task="task" />
   </div>
 </template>
 

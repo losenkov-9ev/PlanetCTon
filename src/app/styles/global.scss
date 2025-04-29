@@ -57,7 +57,6 @@ html, body, #app {
 .page {
   background-image: url('@/shared/assets/bg/bg.webp');
   @include mixins.bg-cover;
-  height: 100vh;
 
   flex: 1;
   padding: 16px;
