@@ -1,12 +1,21 @@
 <script setup lang="ts">
 import UiButton from '@/shared/ui/UiButton.vue'
+import { ref } from 'vue'
+import ComboDialog from '@/features/dialogs/ComboDialog.vue'
+
+const showComboDialog = ref<boolean>(false)
+
+const handleButtonClick = () => {
+  showComboDialog.value = true
+}
 </script>
 
 <template>
   <div class="combo-planet-card">
     <div class="combo-text">Комбо планет на кнопку</div>
 
-    <UiButton> Получи награду </UiButton>
+    <UiButton @click="handleButtonClick"> Получи награду </UiButton>
+    <ComboDialog v-model="showComboDialog" />
   </div>
 </template>
 

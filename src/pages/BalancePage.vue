@@ -8,6 +8,7 @@ import TransactionCard from '@/entities/TransactionCard.vue'
 import UiModal from '@/shared/ui/UiModal.vue'
 import { ref, watch } from 'vue'
 import WithdrawalModal from '@/features/modals/WithdrawalModal.vue'
+import TopUpBalanceModal from '@/features/modals/TopUpBalanceModal.vue'
 
 const balanceActionCards: BalanceCardData[] = [
   {
@@ -29,13 +30,13 @@ const balanceActionCards: BalanceCardData[] = [
 ]
 
 const showWithdrawal = ref<boolean>(false)
+const showTopUp = ref<boolean>(false)
 
 function handleCardAction(cardId: number) {
-  console.log(cardId)
   if (cardId === 2) {
     showWithdrawal.value = true
   } else {
-    //   ...
+    showTopUp.value = true
   }
 }
 </script>
@@ -64,6 +65,9 @@ function handleCardAction(cardId: number) {
   </div>
   <UiModal v-model="showWithdrawal" title="Вывести баланс">
     <WithdrawalModal />
+  </UiModal>
+  <UiModal v-model="showTopUp" title="Пополнить баланс">
+    <TopUpBalanceModal />
   </UiModal>
 </template>
 

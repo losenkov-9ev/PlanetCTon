@@ -1,13 +1,23 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+
 import UiButton from '@/shared/ui/UiButton.vue'
 import UiModal from '@/shared/ui/UiModal.vue'
-
-import { ref } from 'vue'
 import AttackPlanetModal from '@/features/modals/AttackPlanetModal.vue'
+import CongratsDialog from '@/features/dialogs/CongratsDialog.vue'
 
-const show = ref<boolean>(false)
+const showAttackModal = ref(false)
+const showCongrats = ref(false)
+
+function onOpenAttack() {
+  showAttackModal.value = true
+}
+
+function onAttackConfirmed() {
+  showAttackModal.value = false
+  showCongrats.value = true
+}
 </script>
-
 <template>
   <section class="planet-panel">
     <div class="planet-wrapper">
@@ -29,10 +39,12 @@ const show = ref<boolean>(false)
       </div>
     </div>
 
-    <UiButton @click="show = true">АТАКОВАТЬ!</UiButton>
-    <UiModal v-model="show" title="Атаковать планету">
-      <AttackPlanetModal />
+    <UiButton @click="onOpenAttack">АТАКОВАТЬ!</UiButton>
+    <UiModal v-model="showAttackModal" title="Атаковать планету">
+      <AttackPlanetModal @attack="onAttackConfirmed" />
     </UiModal>
+
+    <CongratsDialog v-model="showCongrats" />
   </section>
 </template>
 

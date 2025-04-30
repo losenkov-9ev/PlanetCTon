@@ -92,6 +92,8 @@ onBeforeUnmount(() => {
   border-radius: 20px 20px 0 0;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  max-height: 80vh;
+  overflow: auto;
 }
 
 .modal-header {
@@ -103,7 +105,7 @@ onBeforeUnmount(() => {
 
 .overlay-fade-enter-active,
 .overlay-fade-leave-active {
-  transition: opacity 0.3s ease;
+  transition: opacity 0.4s ease;
 }
 .overlay-fade-enter-from,
 .overlay-fade-leave-to {
@@ -116,7 +118,7 @@ onBeforeUnmount(() => {
 
 .slide-up-enter-active,
 .slide-up-leave-active {
-  transition: transform 0.3s ease;
+  transition: transform 0.4s ease;
 }
 .slide-up-enter-from,
 .slide-up-leave-to {

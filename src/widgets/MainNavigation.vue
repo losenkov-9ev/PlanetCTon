@@ -15,8 +15,8 @@ function isActive(path: string) {
       v-for="item in NAVIGATION"
       :key="item.path"
       :to="item.path"
-      class="nav-item"
       :class="{ active: isActive(item.path) }"
+      class="nav-item"
     >
       <component :is="item.icon" class="nav-icon" />
       <span>{{ item.label }}</span>
@@ -30,7 +30,7 @@ function isActive(path: string) {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 64px;
+  height: 70px;
   display: flex;
   background: rgba(30, 34, 55, 0.8);
   backdrop-filter: blur(8px);
@@ -39,6 +39,7 @@ function isActive(path: string) {
   align-items: center;
   z-index: 1000;
   padding: 0 10px;
+  padding-bottom: 4px;
 }
 
 .nav-item {
@@ -55,18 +56,7 @@ function isActive(path: string) {
   width: 64px;
   position: relative;
   transition: all 0.2s;
-  &::before {
-    content: '';
-    position: absolute;
-    opacity: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    height: 3px;
-    width: 100%;
-    border-radius: 10px;
-    transition: all 0.2s;
-  }
+
   svg path {
     transition: all 0.2s;
   }
@@ -75,10 +65,6 @@ function isActive(path: string) {
 
     svg path {
       fill: #6ceaf1;
-    }
-    &::before {
-      opacity: 1;
-      background-color: var(--accent);
     }
   }
 }
