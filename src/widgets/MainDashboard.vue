@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import BalanceCard from '@/entities/BalanceCard.vue'
 import ComboPlanetCard from '@/features/ComboPlanetCard.vue'
-import DailyAction from '@/features/DailyAction.vue'
 </script>
 
 <template>

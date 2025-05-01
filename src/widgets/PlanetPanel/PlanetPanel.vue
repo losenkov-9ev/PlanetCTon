@@ -5,7 +5,10 @@ import UiButton from '@/shared/ui/UiButton.vue'
 import UiModal from '@/shared/ui/UiModal.vue'
 import AttackPlanetModal from '@/features/modals/AttackPlanetModal.vue'
 import CongratsDialog from '@/features/dialogs/CongratsDialog.vue'
-import PlanetProgress from '@/widgets/PlanetPanel/PlanetProgress.vue'
+
+import PlanetImage from '@/shared/assets/planets/planet-1/level-0.png'
+import UfoImage from '@/shared/assets/bg/ufo.webp'
+import AttackScene from '@/widgets/PlanetPanel/AttackScene.vue'
 
 const showAttackModal = ref(false)
 const showCongrats = ref(false)
@@ -19,18 +22,28 @@ function onOpenAttack() {
 function onAttackConfirmed() {
   showAttackModal.value = false
   currentLevel.value++
-  setTimeout(() => {
-    showCongrats.value = true
-  }, 600)
+  // setTimeout(() => {
+  //   showCongrats.value = true
+  // }, 3600)
 }
+
+const fixedPoints = [
+  { x: 0.7, y: 0.8 },
+  { x: 0.85, y: 0.42, rotation: 120 },
+  { x: 0.22, y: 0.7, size: 0.8 },
+  { x: 0.25, y: 0.3 },
+  { x: 0.6, y: 0.18 },
+  { x: 0.45, y: 0.5 },
+]
 </script>
 <template>
   <section class="planet-panel">
-    <div class="planet-wrapper">
-      <PlanetProgress :current-level="currentLevel" />
-      <img src="../../shared/assets/planets/planet-1.png" alt="Мини-планета" />
-    </div>
-
+    <AttackScene
+      :current-level="currentLevel"
+      :fixed-points="fixedPoints"
+      :planet-src="PlanetImage"
+      :ufo-src="UfoImage"
+    />
     <div class="level-card">
       <div class="level-info">
         <img
@@ -67,18 +80,8 @@ function onAttackConfirmed() {
   justify-content: flex-end;
   align-items: center;
   gap: 16px;
-  margin-top: -20px;
-}
-
-/* Планета */
-.planet-wrapper {
-  position: relative;
-  width: 120%;
-  max-width: 408px;
-
-  @media (max-width: 400px) {
-    max-width: 362px;
-  }
+  margin-top: 10px;
+  overflow: hidden;
 }
 
 .planet-image {
@@ -103,7 +106,7 @@ function onAttackConfirmed() {
   padding-left: 60px;
   position: relative;
   border: 1px solid #32315f;
-  margin-top: -64px;
+  margin-top: 0px;
 }
 
 .level-info {
