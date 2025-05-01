@@ -15,6 +15,7 @@ import UiInput from '@/shared/ui/UiInput.vue'
     tip="Адрес кошелька TON"
     placeholder="Введите адрес"
     class="input"
+    value="0x40afb83b623333a005885758e1bea78d45314642"
   />
   <UiInput
     :custom="{
@@ -24,6 +25,7 @@ import UiInput from '@/shared/ui/UiInput.vue'
     placeholder="Введите MEMO"
     error="*Обязательно при переводе укажите комментарий MEMO"
     class="input"
+    value="MEMO"
   />
   <UiDivider value="Пополнить другим способом" />
   <UiInput
@@ -34,6 +36,7 @@ import UiInput from '@/shared/ui/UiInput.vue'
     placeholder="Введите адрес"
     error="*USDT будут конвертированы автоматически в $PLANET"
     class="input"
+    value="0x40afb83b623333a005885758e1bea78d45314642"
   />
   <UiButton class="button" color="blue">Пополнить</UiButton>
 </template>

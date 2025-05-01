@@ -3,17 +3,14 @@ import { defineProps, defineEmits, toRef } from 'vue'
 import UiButton from '@/shared/ui/UiButton.vue'
 import UiDialog from '@/shared/ui/UiDialog.vue'
 
-interface CongratsDialogProps {
+interface Props {
   modelValue: boolean
 }
-interface CongratsDialogEmits {
+const props = defineProps<Props>()
+
+const emit = defineEmits<{
   (e: 'update:modelValue', v: boolean): void
-}
-
-const props = defineProps<CongratsDialogProps>()
-const emit = defineEmits<CongratsDialogEmits>()
-
-const visible = toRef(props, 'modelValue')
+}>()
 
 function close() {
   emit('update:modelValue', false)
@@ -21,7 +18,7 @@ function close() {
 </script>
 
 <template>
-  <UiDialog v-model="visible">
+  <UiDialog :model-value="props.modelValue" @update:modelValue="emit('update:modelValue', $event)">
     <div class="congrats-modal">
       <h2 class="modal-title title-1">Поздравляем!</h2>
       <p class="modal-text">Вы успешно атаковали планету!</p>

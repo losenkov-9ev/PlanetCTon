@@ -30,7 +30,7 @@ function isActive(path: string) {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 70px;
+  height: 72px;
   display: flex;
   background: rgba(30, 34, 55, 0.8);
   backdrop-filter: blur(8px);
@@ -39,7 +39,7 @@ function isActive(path: string) {
   align-items: center;
   z-index: 1000;
   padding: 0 10px;
-  padding-bottom: 4px;
+  padding-bottom: 6px;
 }
 
 .nav-item {

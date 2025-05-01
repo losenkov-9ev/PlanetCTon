@@ -1,24 +1,19 @@
 <script setup lang="ts">
 import UiButton from '@/shared/ui/UiButton.vue'
 import UiDialog from '@/shared/ui/UiDialog.vue'
-import { toRef } from 'vue'
 
 const props = defineProps<{ modelValue: boolean }>()
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: boolean): void
+  (e: 'update:modelValue', v: boolean): void
 }>()
 
-// Ссылка на внешний v-model
-const visible = toRef(props, 'modelValue')
-
-// Закрыть диалог
 function closeDialog() {
   emit('update:modelValue', false)
 }
 </script>
 
 <template>
-  <UiDialog v-model="visible">
+  <UiDialog :model-value="props.modelValue" @update:modelValue="emit('update:modelValue', $event)">
     <div class="combo-dialog">
       <h2 class="title-1 combo-title">Комбо</h2>
       <div class="combo-cards">

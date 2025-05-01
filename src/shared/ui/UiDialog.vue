@@ -1,30 +1,44 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue'
+import { ref, watch, defineProps, defineEmits } from 'vue'
 
-interface UiDialogProps {
-  modelValue: boolean
-}
+defineOptions({ name: 'UiDialog' })
 
-interface UiDialogEmits {
+// Принимаем внешний v-model
+const props = defineProps<{ modelValue: boolean }>()
+const emit = defineEmits<{
   (e: 'update:modelValue', v: boolean): void
-}
+}>()
 
-defineProps<UiDialogProps>()
-const emit = defineEmits<UiDialogEmits>()
+// Локальное состояние для управления видимостью
+const internalVisible = ref(props.modelValue)
 
+// Следим за изменениями внешнего prop и обновляем внутреннее состояние
+watch(
+  () => props.modelValue,
+  (val) => {
+    internalVisible.value = val
+  },
+)
+
+// При изменении внутреннего значения эмитим событие наверх
+watch(internalVisible, (val) => {
+  emit('update:modelValue', val)
+})
+
+// Функция закрытия вызывается по клику на overlay или из слота
 function close() {
-  emit('update:modelValue', false)
+  internalVisible.value = false
 }
 </script>
 
 <template>
   <Teleport to="body">
     <Transition name="overlay-fade">
-      <div v-if="modelValue" class="dialog-overlay" @click.self="close" />
+      <div v-if="internalVisible" class="dialog-overlay" @click.self="close" />
     </Transition>
 
     <Transition name="slide-up">
-      <div v-if="modelValue" class="dialog-wrapper">
+      <div v-if="internalVisible" class="dialog-wrapper">
         <slot />
       </div>
     </Transition>
