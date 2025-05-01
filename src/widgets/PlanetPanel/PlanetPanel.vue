@@ -39,8 +39,8 @@ function onAttackConfirmed() {
           class="level-thumb"
         />
         <div class="level-texts">
-          <div class="level-title">Уровень 1</div>
-          <div class="level-progress">Осталось: 0/7</div>
+          <div class="level-title">Уровень {{ currentLevel }}</div>
+          <div class="level-progress">Осталось: {{ currentLevel }}/7</div>
         </div>
       </div>
 
@@ -67,7 +67,7 @@ function onAttackConfirmed() {
   justify-content: flex-end;
   align-items: center;
   gap: 16px;
-  margin-top: -40px;
+  margin-top: -20px;
 }
 
 /* Планета */
