@@ -5,9 +5,12 @@ import UiButton from '@/shared/ui/UiButton.vue'
 import UiModal from '@/shared/ui/UiModal.vue'
 import AttackPlanetModal from '@/features/modals/AttackPlanetModal.vue'
 import CongratsDialog from '@/features/dialogs/CongratsDialog.vue'
+import PlanetProgress from '@/widgets/PlanetPanel/PlanetProgress.vue'
 
 const showAttackModal = ref(false)
 const showCongrats = ref(false)
+
+const currentLevel = ref<number>(0)
 
 function onOpenAttack() {
   showAttackModal.value = true
@@ -15,18 +18,26 @@ function onOpenAttack() {
 
 function onAttackConfirmed() {
   showAttackModal.value = false
-  showCongrats.value = true
+  currentLevel.value++
+  setTimeout(() => {
+    showCongrats.value = true
+  }, 600)
 }
 </script>
 <template>
   <section class="planet-panel">
     <div class="planet-wrapper">
-      <!--      TODO        -->
+      <PlanetProgress :current-level="currentLevel" />
+      <img src="../../shared/assets/planets/planet-1.png" alt="Мини-планета" />
     </div>
 
     <div class="level-card">
       <div class="level-info">
-        <img src="../shared/assets/planets/planet-1.png" alt="Мини-планета" class="level-thumb" />
+        <img
+          src="../../shared/assets/planets/planet-1.png"
+          alt="Мини-планета"
+          class="level-thumb"
+        />
         <div class="level-texts">
           <div class="level-title">Уровень 1</div>
           <div class="level-progress">Осталось: 0/7</div>
@@ -35,7 +46,7 @@ function onAttackConfirmed() {
 
       <div class="level-reward">
         +100
-        <img src="@/shared/assets/currency/ton.webp" alt="TON" class="reward-icon" />
+        <img src="../../shared/assets/currency/ton.webp" alt="TON" class="reward-icon" />
       </div>
     </div>
 
@@ -56,33 +67,24 @@ function onAttackConfirmed() {
   justify-content: flex-end;
   align-items: center;
   gap: 16px;
-  margin-top: auto;
+  margin-top: -40px;
 }
 
 /* Планета */
 .planet-wrapper {
   position: relative;
   width: 120%;
+  max-width: 408px;
+
+  @media (max-width: 400px) {
+    max-width: 362px;
+  }
 }
 
 .planet-image {
   width: 100%;
   height: 100%;
   object-fit: contain;
-}
-
-.attack-progress {
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 320px;
-  height: 160px;
-  border-top: 4px solid rgba(255, 255, 255, 0.2);
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-bottom: none;
-  border-radius: 160px 160px 0 0;
 }
 
 /* Карточка уровня */
@@ -101,6 +103,7 @@ function onAttackConfirmed() {
   padding-left: 60px;
   position: relative;
   border: 1px solid #32315f;
+  margin-top: -64px;
 }
 
 .level-info {

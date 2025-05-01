@@ -15,7 +15,7 @@ import TaskCard from '@/entities/TaskCard/TaskCard.vue'
 </template>
 
 <style scoped>
-.tasks-list .title-1 {
+.tasks-page .title-1 {
   margin-bottom: 10px;
 }
 </style>

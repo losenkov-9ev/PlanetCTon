@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MainDashboard from '@/widgets/MainDashboard.vue'
-import PlanetPanel from '@/widgets/PlanetPanel.vue'
+import PlanetPanel from '@/widgets/PlanetPanel/PlanetPanel.vue'
 </script>
 
 <template>
