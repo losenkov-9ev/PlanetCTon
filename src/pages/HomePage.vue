@@ -36,7 +36,6 @@ import PlanetPanel from '@/widgets/PlanetPanel/PlanetPanel.vue'
   z-index: 10;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  padding-bottom: 64px;
+  justify-content: space-between;
 }
 </style>
