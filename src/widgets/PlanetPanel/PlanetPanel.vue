@@ -39,6 +39,8 @@ const showCongrats = ref(false)
 const currentLevel = ref<number>(0)
 const rerenderAttackScene = ref<number>(0)
 
+const maxLevel = 10
+
 function onOpenAttack() {
   showAttackModal.value = true
 }
@@ -78,8 +80,8 @@ const fixedPoints = [
           class="level-thumb"
         />
         <div class="level-texts">
-          <div class="level-title">Уровень {{ currentLevel }}</div>
-          <div class="level-progress">Осталось: {{ currentLevel }}/7</div>
+          <div class="level-title">Уровень {{ currentLevel + 1 }}</div>
+          <div class="level-progress">Осталось: {{ maxLevel - currentLevel }}/{{ maxLevel }}</div>
         </div>
       </div>
 
@@ -89,7 +91,7 @@ const fixedPoints = [
       </div>
     </div>
 
-    <UiButton @click="onOpenAttack">АТАКОВАТЬ!</UiButton>
+    <UiButton :disabled="maxLevel === currentLevel + 1" @click="onOpenAttack">АТАКОВАТЬ!</UiButton>
     <UiModal v-model="showAttackModal" title="Атаковать планету">
       <AttackPlanetModal @attack="onAttackConfirmed" />
     </UiModal>

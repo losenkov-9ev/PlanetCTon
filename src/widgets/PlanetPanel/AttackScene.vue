@@ -48,6 +48,7 @@ const persistentExplosions = ref<Array<{ x: number; y: number; rotation: number;
 
 const EXP_DUR = 1500
 const EXP_SIZE = 100
+const CONSTANT_LANDING = { x: 0.7, y: 0.8 }
 
 // Добавляем анимацию взрыва и сохраняем навсегда
 function triggerExplosionAt(px: number, py: number, rot = 0, scl = 1) {
@@ -154,7 +155,7 @@ async function animateUfoTo(px: number, py: number) {
 // on level change trigger all explosions on update
 watch(
   () => props.currentLevel,
-  (lvl) => {
+  () => {
     if (!container.value) return
 
     const { width, height } = container.value.getBoundingClientRect()
@@ -166,14 +167,8 @@ watch(
       const scl = pt.scale ?? 1
       setTimeout(() => triggerExplosionAt(px, py, rot, scl), i * 400)
     })
-    // Optionally animate UFO only to the current level point
-    const idx = lvl - 1
-    if (idx >= 0 && idx < props.fixedPoints.length) {
-      const p = props.fixedPoints[idx]
-      const px = p.x * width
-      const py = p.y * height
-      animateUfoTo(px, py)
-    }
+
+    animateUfoTo(CONSTANT_LANDING.x * width, CONSTANT_LANDING.y * height)
   },
 )
 </script>
