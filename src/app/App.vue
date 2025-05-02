@@ -17,12 +17,10 @@ function onGlobalTap(e: TouchEvent | MouseEvent) {
 }
 
 onMounted(() => {
-  document.addEventListener('touchstart', onGlobalTap, { passive: true })
   document.addEventListener('click', onGlobalTap)
 })
 
 onBeforeUnmount(() => {
-  document.removeEventListener('touchstart', onGlobalTap)
   document.removeEventListener('click', onGlobalTap)
 })
 </script>

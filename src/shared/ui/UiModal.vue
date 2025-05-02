@@ -82,9 +82,7 @@ onBeforeUnmount(() => {
   overflow: auto;
   z-index: 2000;
   pointer-events: none;
-  @supports (height: 100dvh) {
-    height: 100dvh; /* shrink‑to‑fit при клавиатуре */
-  }
+  height: 100dvh;
 }
 
 .modal-close {
@@ -109,7 +107,7 @@ onBeforeUnmount(() => {
   border-radius: 20px 20px 0 0;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  max-height: 95vh;
+  height: 95dvh;
   overflow: auto;
 }
 
