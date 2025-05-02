@@ -105,7 +105,7 @@ onBeforeUnmount(() => {
   max-width: 500px;
   border-radius: 20px 20px 0 0;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-  height: 95vh;
+  max-height: 95vh;
   overflow: auto;
 }
 
