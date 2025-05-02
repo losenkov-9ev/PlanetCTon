@@ -82,7 +82,6 @@ onBeforeUnmount(() => {
   overflow: auto;
   z-index: 2000;
   pointer-events: none;
-  height: 100dvh;
 }
 
 .modal-close {
@@ -106,8 +105,7 @@ onBeforeUnmount(() => {
   max-width: 500px;
   border-radius: 20px 20px 0 0;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  height: 95dvh;
+  height: 95vh;
   overflow: auto;
 }
 
