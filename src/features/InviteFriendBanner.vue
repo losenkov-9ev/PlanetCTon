@@ -7,7 +7,7 @@ import CopyButton from '@/shared/ui/CopyButton.vue'
   <div class="invite-friend-banner">
     <div class="banner-inner">
       <div class="invite-text">
-        <span>30%</span> ПРЯМО <span>В TON</span><br />
+        <span>30%</span> ПРЯМО <span>В TON</span>
         ОТ ВАШИХ ДРУЗЕЙ
       </div>
       <div class="banner-buttons">
@@ -38,12 +38,11 @@ import CopyButton from '@/shared/ui/CopyButton.vue'
 }
 
 .banner-inner {
-  max-width: 246px;
-  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 6px;
+  text-align: center;
 }
 
 .banner-buttons {

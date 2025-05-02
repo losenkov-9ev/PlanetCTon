@@ -1,177 +1,181 @@
-<template>
-  <div ref="container" class="planet-attack-scene">
-    <!-- Планета -->
-    <img ref="planetEl" :src="planetSrc" alt="Planet" class="planet-img" />
-    <!-- Canvas для взрывов -->
-    <canvas ref="canvas" class="explosion-canvas"></canvas>
-    <!-- НЛО -->
-    <img ref="ufoEl" :src="ufoSrc" alt="UFO" class="ufo" />
-  </div>
-</template>
-
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, watch, defineProps } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch, defineProps } from 'vue'
+import { useResizeObserver } from '@vueuse/core'
 import explosionSrc from '@/shared/assets/planets/expose.png'
 
-// Props: текущий уровень и фиксированные точки с опциями
+interface FixedPoint {
+  x: number
+  y: number
+  rotation?: number
+  scale?: number
+}
+const EXPLOSION_DURATION = 1_500 // мс
+const EXPLOSION_BASE_SIZE = 100 // px
+const UFO_LANDING = { x: 0.7, y: 0.8 } as const
+
 const props = defineProps<{
   currentLevel: number
-  fixedPoints: Array<{ x: number; y: number; rotation?: number; scale?: number }>
+  fixedPoints: FixedPoint[]
   planetSrc: string
   ufoSrc: string
 }>()
 
-const { planetSrc, ufoSrc } = props
+const container = ref<HTMLElement>()
+const canvas = ref<HTMLCanvasElement>()
+const ctx = computed(() => canvas.value?.getContext('2d') ?? null)
+const ufoEl = ref<HTMLImageElement>()
 
-// Refs на контейнер, canvas и НЛО
-const container = ref<HTMLDivElement | null>(null)
-const canvas = ref<HTMLCanvasElement | null>(null)
-const ufoEl = ref<HTMLImageElement | null>(null)
-let ctx: CanvasRenderingContext2D | null = null
-
-// Картинка-взрыв
 const explosionImg = new Image()
 explosionImg.src = explosionSrc
 
-// Анимация взрывов: активные и постоянные
-interface ActiveExpl {
+interface Explosion {
   x: number
   y: number
   rotation: number
   scale: number
   start: number
 }
-const activeExplosions = ref<ActiveExpl[]>([])
-const persistentExplosions = ref<Array<{ x: number; y: number; rotation: number; scale: number }>>(
-  [],
-)
+const activeExplosions = ref<Explosion[]>([])
+const persistentExplosions = ref<Explosion[]>([])
 
-const EXP_DUR = 1500
-const EXP_SIZE = 100
-const CONSTANT_LANDING = { x: 0.7, y: 0.8 }
-
-// Добавляем анимацию взрыва и сохраняем навсегда
-function triggerExplosionAt(px: number, py: number, rot = 0, scl = 1) {
+function addExplosion(pt: FixedPoint) {
   const now = performance.now()
-  activeExplosions.value.push({ x: px, y: py, rotation: rot, scale: scl, start: now })
-  persistentExplosions.value.push({ x: px, y: py, rotation: rot, scale: scl })
+  const exp: Explosion = {
+    x: pt.x,
+    y: pt.y,
+    rotation: pt.rotation ?? 0,
+    scale: pt.scale ?? 1,
+    start: now,
+  }
+  activeExplosions.value.push(exp)
+  persistentExplosions.value.push({ ...exp })
 }
 
-// Рендер-цикл для canvas
-let rafId: number
-function loop() {
-  if (!ctx || !container.value) return
-  const { width, height } = container.value.getBoundingClientRect()
-  ctx.clearRect(0, 0, width, height)
-
-  // Постоянные взрывы
-  ctx.globalAlpha = 1
-  for (const e of persistentExplosions.value) {
-    ctx.save()
-    ctx.translate(e.x, e.y)
-    ctx.rotate(((e.rotation ?? 0) * Math.PI) / 180)
-    ctx.scale(e.scale ?? 1, e.scale ?? 1)
-    ctx.drawImage(explosionImg, -EXP_SIZE / 2, -EXP_SIZE / 2, EXP_SIZE, EXP_SIZE)
-    ctx.restore()
+function resizeCanvas() {
+  if (canvas.value && container.value) {
+    const { width, height } = container.value.getBoundingClientRect()
+    canvas.value.width = width
+    canvas.value.height = height
   }
+}
+useResizeObserver(container, resizeCanvas)
 
-  // Активные взрывы с анимацией
+let rafId: number
+function renderExplosion(
+  c: CanvasRenderingContext2D,
+  {
+    x,
+    y,
+    rotation,
+    scale,
+    alpha,
+  }: { x: number; y: number; rotation: number; scale: number; alpha: number },
+) {
+  c.save()
+  c.translate(x, y)
+  c.rotate((rotation * Math.PI) / 180)
+  c.globalAlpha = alpha
+  const size = EXPLOSION_BASE_SIZE * scale
+  c.drawImage(explosionImg, -size / 2, -size / 2, size, size)
+  c.restore()
+}
+
+function loop() {
+  const c = ctx.value
+  if (!c || !container.value) return
+
+  const { width, height } = container.value.getBoundingClientRect()
+  c.clearRect(0, 0, width, height)
+
+  persistentExplosions.value.forEach((e) => renderExplosion(c, { ...e, alpha: 1 }))
+
   const now = performance.now()
-  activeExplosions.value = activeExplosions.value.filter((exp) => {
-    if (ctx) {
-      const t = (now - exp.start) / EXP_DUR
-      if (t >= 1) return false
-      const p = 1 - Math.pow(1 - t, 2)
-      const size = p * EXP_SIZE * exp.scale
-      ctx.save()
-      ctx.translate(exp.x, exp.y)
-      ctx.rotate(((exp.rotation ?? 0) * Math.PI) / 180)
-      ctx.globalAlpha = 1 - t
-      ctx.drawImage(explosionImg, -size / 2, -size / 2, size, size)
-      ctx.restore()
-      return true
-    }
+  activeExplosions.value = activeExplosions.value.filter((e) => {
+    const t = (now - e.start) / EXPLOSION_DURATION
+    if (t >= 1) return false
+    const progress = 1 - (1 - t) ** 2 // ease‑out‑quad
+    renderExplosion(c, {
+      ...e,
+      scale: e.scale * progress,
+      alpha: 1 - t,
+    })
+    return true
   })
 
   rafId = requestAnimationFrame(loop)
 }
 
-onMounted(() => {
-  if (canvas.value && container.value) {
-    const { width, height } = container.value.getBoundingClientRect()
-    canvas.value.width = width
-    canvas.value.height = height
-    ctx = canvas.value.getContext('2d')
-    explosionImg.onload = () => loop()
-  }
-})
-
-onBeforeUnmount(() => cancelAnimationFrame(rafId))
-
-// Анимация НЛО (Web Animations API)
-async function animateUfoTo(px: number, py: number) {
+async function animateUfoTo(destX: number, destY: number) {
   if (!ufoEl.value || !container.value) return
-  const rect = container.value.getBoundingClientRect()
-  const startY = rect.height / 2 - ufoEl.value.clientHeight / 2
+  const { width, height } = container.value.getBoundingClientRect()
+  const ufoW = ufoEl.value.clientWidth
+  const ufoH = ufoEl.value.clientHeight
+  const startY = height / 2 - ufoH / 2
 
-  // Начальное положение за левым краем
-  ufoEl.value.style.transform = `translate(${-ufoEl.value.clientWidth}px, ${startY}px)`
+  ufoEl.value.style.transform = `translate(${-ufoW}px, ${startY}px)`
 
-  // Полёт к точке
   await ufoEl.value.animate(
     [
-      { transform: `translate(${-ufoEl.value.clientWidth}px, ${startY}px)` },
-      {
-        transform: `translate(${px - ufoEl.value.clientWidth / 2}px, ${py - ufoEl.value.clientHeight / 2}px)`,
-      },
+      { transform: `translate(${-ufoW}px, ${startY}px)` },
+      { transform: `translate(${destX - ufoW / 2}px, ${destY - ufoH / 2}px)` },
     ],
     { duration: 800, easing: 'ease-in-out', fill: 'forwards' },
   ).finished
 
-  // Триггерим canvas-взрыв с ротацией и масштабом из fixedPoints
-  const idx = props.currentLevel - 1
-  const fp = props.fixedPoints[idx]
-  const rot = fp.rotation ?? 0
-  const scl = fp.scale ?? 1
+  addExplosion({
+    x: destX,
+    y: destY,
+    rotation: props.fixedPoints[props.currentLevel - 1]?.rotation,
+    scale: props.fixedPoints[props.currentLevel - 1]?.scale,
+  })
+  await new Promise((r) => setTimeout(r, EXPLOSION_DURATION))
 
-  triggerExplosionAt(px, py, rot, scl)
-
-  // Ждём завершения анимации взрыва
-  await new Promise((r) => setTimeout(r, EXP_DUR))
-
-  // Отлет обратно вправо
   await ufoEl.value.animate(
     [
-      {
-        transform: `translate(${px - ufoEl.value.clientWidth / 2}px, ${py - ufoEl.value.clientHeight / 2}px)`,
-      },
-      { transform: `translate(${rect.width + ufoEl.value.clientWidth}px, ${startY}px)` },
+      { transform: `translate(${destX - ufoW / 2}px, ${destY - ufoH / 2}px)` },
+      { transform: `translate(${width + ufoW}px, ${startY}px)` },
     ],
     { duration: 800, easing: 'ease-in', fill: 'forwards' },
   ).finished
 }
 
-// При изменении уровня запускаем анимацию НЛО
-// on level change trigger all explosions on update
+onMounted(() => {
+  resizeCanvas()
+  explosionImg.onload = () => loop()
+})
+onBeforeUnmount(() => cancelAnimationFrame(rafId))
+
 watch(
   () => props.currentLevel,
   () => {
     if (!container.value) return
-
     const { width, height } = container.value.getBoundingClientRect()
-    // Animate explosions for all fixedPoints
-    props.fixedPoints.forEach((pt, i) => {
-      const px = pt.x * width
-      const py = pt.y * height
-      const rot = pt.rotation ?? 0
-      const scl = pt.scale ?? 1
-      setTimeout(() => triggerExplosionAt(px, py, rot, scl), i * 400)
-    })
 
-    animateUfoTo(CONSTANT_LANDING.x * width, CONSTANT_LANDING.y * height)
+    props.fixedPoints.forEach((pt, i) =>
+      setTimeout(
+        () =>
+          addExplosion({
+            x: pt.x * width,
+            y: pt.y * height,
+            rotation: pt.rotation,
+            scale: pt.scale,
+          }),
+        i * 400,
+      ),
+    )
+
+    animateUfoTo(UFO_LANDING.x * width, UFO_LANDING.y * height)
   },
 )
 </script>
+
+<template>
+  <div ref="container" class="planet-attack-scene">
+    <img :src="planetSrc" alt="Planet" class="planet-img" />
+    <canvas ref="canvas" class="explosion-canvas" />
+    <img ref="ufoEl" :src="ufoSrc" alt="UFO" class="ufo" />
+  </div>
+</template>
 
 <style scoped lang="scss">
 .planet-attack-scene {
@@ -195,7 +199,6 @@ watch(
   width: 280px;
   height: auto;
   will-change: transform;
-
   transform: translateX(-100%);
 }
 </style>
