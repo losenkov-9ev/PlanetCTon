@@ -77,17 +77,19 @@ function loop() {
   // Активные взрывы с анимацией
   const now = performance.now()
   activeExplosions.value = activeExplosions.value.filter((exp) => {
-    const t = (now - exp.start) / EXP_DUR
-    if (t >= 1) return false
-    const p = 1 - Math.pow(1 - t, 2)
-    const size = p * EXP_SIZE * exp.scale
-    ctx.save()
-    ctx.translate(exp.x, exp.y)
-    ctx.rotate(((exp.rotation ?? 0) * Math.PI) / 180)
-    ctx.globalAlpha = 1 - t
-    ctx.drawImage(explosionImg, -size / 2, -size / 2, size, size)
-    ctx.restore()
-    return true
+    if (ctx) {
+      const t = (now - exp.start) / EXP_DUR
+      if (t >= 1) return false
+      const p = 1 - Math.pow(1 - t, 2)
+      const size = p * EXP_SIZE * exp.scale
+      ctx.save()
+      ctx.translate(exp.x, exp.y)
+      ctx.rotate(((exp.rotation ?? 0) * Math.PI) / 180)
+      ctx.globalAlpha = 1 - t
+      ctx.drawImage(explosionImg, -size / 2, -size / 2, size, size)
+      ctx.restore()
+      return true
+    }
   })
 
   rafId = requestAnimationFrame(loop)
