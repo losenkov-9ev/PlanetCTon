@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, computed, ref, onMounted, onBeforeUnmount } from 'vue'
+import { defineProps, defineEmits, computed, ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import CloseIcon from '@/shared/assets/icons/close.svg'
 
 interface UiModalProps {
@@ -14,48 +14,68 @@ const emit = defineEmits<{
 
 const titleId = computed(() => `modal-title-${Math.random().toString(36).substr(2, 9)}`)
 
-// Для сдвига модалки при появлении клавиатуры
+// Оффсет для сдвига при появлении клавиатуры
 const keyboardOffset = ref(0)
-let initialViewportHeight = 0
 
-function onViewportResize() {
-  const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight
-  const offset = initialViewportHeight - viewportHeight
-  keyboardOffset.value = offset > 0 ? offset : 0
+// Обновляем оффсет: используем visualViewport.offsetTop или fallback
+function updateOffset() {
+  if (window.visualViewport) {
+    // offsetTop растёт при поднятии контента браузером над клавиатурой
+    keyboardOffset.value = window.visualViewport.offsetTop || 0
+  } else {
+    // fallback: разница между высотой layout viewport и window.innerHeight
+    const diff = document.documentElement.clientHeight - window.innerHeight
+    keyboardOffset.value = diff > 0 ? diff : 0
+  }
 }
 
+// Навешиваем/снимаем слушатели только при открытой модалке
+function attachListeners() {
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', updateOffset)
+    window.visualViewport.addEventListener('scroll', updateOffset)
+  } else {
+    window.addEventListener('resize', updateOffset)
+  }
+}
+function detachListeners() {
+  if (window.visualViewport) {
+    window.visualViewport.removeEventListener('resize', updateOffset)
+    window.visualViewport.removeEventListener('scroll', updateOffset)
+  } else {
+    window.removeEventListener('resize', updateOffset)
+  }
+}
+
+// Следим за открытием/закрытием
+watch(
+  () => props.modelValue,
+  (open) => {
+    if (open) {
+      updateOffset()
+      attachListeners()
+    } else {
+      keyboardOffset.value = 0
+      detachListeners()
+    }
+  },
+)
+
+// Закрытие
 function close() {
   emit('update:modelValue', false)
 }
-
+// ESC для закрытия
 function onKeydown(e: KeyboardEvent) {
-  if (e.key === 'Escape' && props.modelValue) {
-    close()
-  }
+  if (e.key === 'Escape' && props.modelValue) close()
 }
 
 onMounted(() => {
-  // сохраняем исходную высоту до появления клавиатуры
-  initialViewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight
-
-  // слушаем изменения видимой области
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', onViewportResize)
-  } else {
-    window.addEventListener('resize', onViewportResize)
-  }
-
-  // слушаем ESC для закрытия
   window.addEventListener('keydown', onKeydown)
 })
-
 onBeforeUnmount(() => {
-  if (window.visualViewport) {
-    window.visualViewport.removeEventListener('resize', onViewportResize)
-  } else {
-    window.removeEventListener('resize', onViewportResize)
-  }
   window.removeEventListener('keydown', onKeydown)
+  detachListeners()
 })
 </script>
 
@@ -93,9 +113,9 @@ onBeforeUnmount(() => {
 <style scoped lang="scss">
 .modal-overlay {
   position: fixed;
-  z-index: 1500;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
+  z-index: 1500;
   pointer-events: auto;
 }
 
@@ -108,6 +128,7 @@ onBeforeUnmount(() => {
   overflow: auto;
   z-index: 2000;
   pointer-events: none;
+  /* bottom будет переопределён динамически */
 }
 
 .modal-header {
@@ -130,7 +151,6 @@ onBeforeUnmount(() => {
   background: #1e2237;
   border-top: 5px solid var(--accent);
   padding: 16px;
-  /* учёт безопасной зоны iOS */
   padding-bottom: calc(30px + env(safe-area-inset-bottom));
   width: 100%;
   max-width: 500px;
@@ -140,6 +160,7 @@ onBeforeUnmount(() => {
   overflow: auto;
 }
 
+/* Плавное появление/исчезновение фона */
 .overlay-fade-enter-active,
 .overlay-fade-leave-active {
   transition: opacity 0.4s ease;
@@ -153,6 +174,7 @@ onBeforeUnmount(() => {
   opacity: 1;
 }
 
+/* Слайд при монтировании */
 .slide-up-enter-active,
 .slide-up-leave-active {
   transition: transform 0.4s ease;
