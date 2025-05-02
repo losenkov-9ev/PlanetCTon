@@ -76,7 +76,6 @@ onBeforeUnmount(() => {
 .modal-wrapper {
   position: fixed;
   inset: 0;
-  bottom: env(keyboard-inset-bottom, 0px);
   display: flex;
   align-items: flex-end;
   justify-content: center;
