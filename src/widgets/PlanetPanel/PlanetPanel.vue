@@ -6,7 +6,30 @@ import UiModal from '@/shared/ui/UiModal.vue'
 import AttackPlanetModal from '@/features/modals/AttackPlanetModal.vue'
 import CongratsDialog from '@/features/dialogs/CongratsDialog.vue'
 
-import PlanetImage from '@/shared/assets/planets/planet-1/level-0.png'
+import PlanetImage1 from '@/shared/assets/planets/planet-1/level-0.png'
+import PlanetImage2 from '@/shared/assets/planets/planet-2/level-0.png'
+import PlanetImage3 from '@/shared/assets/planets/planet-3/level-0.png'
+import PlanetImage4 from '@/shared/assets/planets/planet-4/level-0.png'
+import PlanetImage5 from '@/shared/assets/planets/planet-5/level-0.png'
+import PlanetImage6 from '@/shared/assets/planets/planet-6/level-0.png'
+import PlanetImage7 from '@/shared/assets/planets/planet-7/level-0.png'
+import PlanetImage8 from '@/shared/assets/planets/planet-8/level-0.png'
+import PlanetImage9 from '@/shared/assets/planets/planet-9/level-0.png'
+import PlanetImage10 from '@/shared/assets/planets/planet-10/level-0.png'
+
+const planets = [
+  PlanetImage1,
+  PlanetImage2,
+  PlanetImage3,
+  PlanetImage4,
+  PlanetImage5,
+  PlanetImage6,
+  PlanetImage7,
+  PlanetImage8,
+  PlanetImage9,
+  PlanetImage10,
+]
+
 import UfoImage from '@/shared/assets/bg/ufo.webp'
 import AttackScene from '@/widgets/PlanetPanel/AttackScene.vue'
 
@@ -14,6 +37,7 @@ const showAttackModal = ref(false)
 const showCongrats = ref(false)
 
 const currentLevel = ref<number>(0)
+const rerenderAttackScene = ref<number>(0)
 
 function onOpenAttack() {
   showAttackModal.value = true
@@ -22,9 +46,10 @@ function onOpenAttack() {
 function onAttackConfirmed() {
   showAttackModal.value = false
   currentLevel.value++
-  // setTimeout(() => {
-  //   showCongrats.value = true
-  // }, 3600)
+  setTimeout(() => {
+    showCongrats.value = true
+    rerenderAttackScene.value++
+  }, 3000)
 }
 
 const fixedPoints = [
@@ -41,8 +66,9 @@ const fixedPoints = [
     <AttackScene
       :current-level="currentLevel"
       :fixed-points="fixedPoints"
-      :planet-src="PlanetImage"
+      :planet-src="planets[rerenderAttackScene]"
       :ufo-src="UfoImage"
+      :key="rerenderAttackScene"
     />
     <div class="level-card">
       <div class="level-info">
@@ -81,7 +107,6 @@ const fixedPoints = [
   align-items: center;
   gap: 16px;
   margin-top: 10px;
-  overflow: hidden;
 }
 
 .planet-image {

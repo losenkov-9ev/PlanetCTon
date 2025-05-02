@@ -32,6 +32,7 @@ const handleCopyClick = async () => {
   if (!inputRef.value) return
 
   const text = inputRef.value.value
+  inputRef.value.focus()
   try {
     await navigator.clipboard.writeText(text)
     isCopied.value = true

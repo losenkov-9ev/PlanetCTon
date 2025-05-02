@@ -46,7 +46,7 @@ const persistentExplosions = ref<Array<{ x: number; y: number; rotation: number;
   [],
 )
 
-const EXP_DUR = 800
+const EXP_DUR = 1500
 const EXP_SIZE = 100
 
 // Добавляем анимацию взрыва и сохраняем навсегда
@@ -77,19 +77,17 @@ function loop() {
   // Активные взрывы с анимацией
   const now = performance.now()
   activeExplosions.value = activeExplosions.value.filter((exp) => {
-    if (ctx) {
-      const t = (now - exp.start) / EXP_DUR
-      if (t >= 1) return false
-      const p = 1 - Math.pow(1 - t, 2)
-      const size = p * EXP_SIZE * exp.scale
-      ctx.save()
-      ctx.translate(exp.x, exp.y)
-      ctx.rotate(((exp.rotation ?? 0) * Math.PI) / 180)
-      ctx.globalAlpha = 1 - t
-      ctx.drawImage(explosionImg, -size / 2, -size / 2, size, size)
-      ctx.restore()
-      return true
-    }
+    const t = (now - exp.start) / EXP_DUR
+    if (t >= 1) return false
+    const p = 1 - Math.pow(1 - t, 2)
+    const size = p * EXP_SIZE * exp.scale
+    ctx.save()
+    ctx.translate(exp.x, exp.y)
+    ctx.rotate(((exp.rotation ?? 0) * Math.PI) / 180)
+    ctx.globalAlpha = 1 - t
+    ctx.drawImage(explosionImg, -size / 2, -size / 2, size, size)
+    ctx.restore()
+    return true
   })
 
   rafId = requestAnimationFrame(loop)
@@ -132,6 +130,7 @@ async function animateUfoTo(px: number, py: number) {
   const fp = props.fixedPoints[idx]
   const rot = fp.rotation ?? 0
   const scl = fp.scale ?? 1
+
   triggerExplosionAt(px, py, rot, scl)
 
   // Ждём завершения анимации взрыва
@@ -150,16 +149,29 @@ async function animateUfoTo(px: number, py: number) {
 }
 
 // При изменении уровня запускаем анимацию НЛО
+// on level change trigger all explosions on update
 watch(
   () => props.currentLevel,
   (lvl) => {
-    const idx = lvl - 1
-    if (idx < 0 || idx >= props.fixedPoints.length || !container.value) return
+    if (!container.value) return
+
     const { width, height } = container.value.getBoundingClientRect()
-    const p = props.fixedPoints[idx]
-    const px = p.x * width
-    const py = p.y * height
-    animateUfoTo(px, py)
+    // Animate explosions for all fixedPoints
+    props.fixedPoints.forEach((pt, i) => {
+      const px = pt.x * width
+      const py = pt.y * height
+      const rot = pt.rotation ?? 0
+      const scl = pt.scale ?? 1
+      setTimeout(() => triggerExplosionAt(px, py, rot, scl), i * 400)
+    })
+    // Optionally animate UFO only to the current level point
+    const idx = lvl - 1
+    if (idx >= 0 && idx < props.fixedPoints.length) {
+      const p = props.fixedPoints[idx]
+      const px = p.x * width
+      const py = p.y * height
+      animateUfoTo(px, py)
+    }
   },
 )
 </script>
@@ -186,5 +198,7 @@ watch(
   width: 280px;
   height: auto;
   will-change: transform;
+
+  transform: translateX(-100%);
 }
 </style>
