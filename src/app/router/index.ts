@@ -6,6 +6,7 @@ import LeadersPage from '@/pages/LeadersPage.vue'
 import FriendsPage from '@/pages/FriendsPage.vue'
 import TasksPage from '@/pages/TasksPage.vue'
 import BalancePage from '@/pages/BalancePage.vue'
+import PlanetsPage from '@/pages/PlanetsPage.vue'
 
 const routes = [
   { path: AppRoutes.HOME, component: HomePage },
@@ -13,6 +14,7 @@ const routes = [
   { path: AppRoutes.FRIENDS, component: FriendsPage },
   { path: AppRoutes.TASKS, component: TasksPage },
   { path: AppRoutes.BALANCE, component: BalancePage },
+  { path: AppRoutes.PLANETS, component: PlanetsPage },
 ]
 
 export const router = createRouter({

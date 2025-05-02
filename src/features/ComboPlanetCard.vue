@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import UiButton from '@/shared/ui/UiButton.vue'
-import { ref } from 'vue'
-import ComboDialog from '@/features/dialogs/ComboDialog.vue'
+import { useRouter } from 'vue-router'
+import { AppRoutes } from '@/app/router/router.ts'
 
-const showComboDialog = ref<boolean>(false)
-
+const router = useRouter()
 const handleButtonClick = () => {
-  showComboDialog.value = true
+  router.push(AppRoutes.PLANETS)
 }
 </script>
 
@@ -15,7 +14,6 @@ const handleButtonClick = () => {
     <div class="combo-text">Комбо планет на кнопку</div>
 
     <UiButton @click="handleButtonClick"> Получи награду </UiButton>
-    <ComboDialog v-model="showComboDialog" />
   </div>
 </template>
 
