@@ -7,6 +7,7 @@ html {
   scroll-behavior: smooth;
   margin: 0 !important;
   height: 100%;
+  -webkit-text-size-adjust: 100%;
 }
 
 input::-webkit-outer-spin-button,
