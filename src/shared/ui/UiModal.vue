@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, computed, onMounted, onBeforeUnmount } from 'vue'
+import { defineProps, defineEmits, computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import CloseIcon from '@/shared/assets/icons/close.svg'
 
 interface UiModalProps {
@@ -8,12 +8,21 @@ interface UiModalProps {
 }
 
 const props = defineProps<UiModalProps>()
-
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
 }>()
 
 const titleId = computed(() => `modal-title-${Math.random().toString(36).substr(2, 9)}`)
+
+// Для сдвига модалки при появлении клавиатуры
+const keyboardOffset = ref(0)
+let initialViewportHeight = 0
+
+function onViewportResize() {
+  const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight
+  const offset = initialViewportHeight - viewportHeight
+  keyboardOffset.value = offset > 0 ? offset : 0
+}
 
 function close() {
   emit('update:modelValue', false)
@@ -26,10 +35,26 @@ function onKeydown(e: KeyboardEvent) {
 }
 
 onMounted(() => {
+  // сохраняем исходную высоту до появления клавиатуры
+  initialViewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight
+
+  // слушаем изменения видимой области
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', onViewportResize)
+  } else {
+    window.addEventListener('resize', onViewportResize)
+  }
+
+  // слушаем ESC для закрытия
   window.addEventListener('keydown', onKeydown)
 })
 
 onBeforeUnmount(() => {
+  if (window.visualViewport) {
+    window.visualViewport.removeEventListener('resize', onViewportResize)
+  } else {
+    window.removeEventListener('resize', onViewportResize)
+  }
   window.removeEventListener('keydown', onKeydown)
 })
 </script>
@@ -44,6 +69,7 @@ onBeforeUnmount(() => {
       <div
         v-if="modelValue"
         class="modal-wrapper"
+        :style="{ bottom: keyboardOffset + 'px' }"
         role="dialog"
         aria-modal="true"
         :aria-labelledby="titleId"
@@ -84,6 +110,11 @@ onBeforeUnmount(() => {
   pointer-events: none;
 }
 
+.modal-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 .modal-close {
   position: absolute;
   top: 8px;
@@ -99,22 +130,14 @@ onBeforeUnmount(() => {
   background: #1e2237;
   border-top: 5px solid var(--accent);
   padding: 16px;
-  padding-bottom: 30px;
-
+  /* учёт безопасной зоны iOS */
+  padding-bottom: calc(30px + env(safe-area-inset-bottom));
   width: 100%;
   max-width: 500px;
   border-radius: 20px 20px 0 0;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
   max-height: 95vh;
   overflow: auto;
-}
-
-.modal-header {
-  h2 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
 }
 
 .overlay-fade-enter-active,
