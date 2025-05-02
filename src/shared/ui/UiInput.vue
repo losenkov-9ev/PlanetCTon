@@ -33,7 +33,7 @@ const handleCopyClick = async () => {
 
   const text = inputRef.value.value
   setTimeout(() => {
-    inputRef.value.focus()
+    inputRef.value?.focus()
   }, 0)
   try {
     await navigator.clipboard.writeText(text)
