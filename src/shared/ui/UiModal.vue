@@ -3,22 +3,27 @@
 import { defineProps, defineEmits, computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import CloseIcon from '@/shared/assets/icons/close.svg'
 
-/* ---------- props / emits ---------- */
+/* ------------------------------------------------------------------ */
+/* props / emits                                                      */
+/* ------------------------------------------------------------------ */
 interface UiModalProps {
+  /** управление видимостью */
   modelValue: boolean
+  /** заголовок окна */
   title: string
 }
 
 const props = defineProps<UiModalProps>()
 const emit = defineEmits<{ (e: 'update:modelValue', value: boolean): void }>()
 
-/* ---------- a11y: id для заголовка ---------- */
+/* ------------------------------------------------------------------ */
+/* a11y: id для aria‑labelledby                                       */
+/* ------------------------------------------------------------------ */
 const titleId = computed(() => `modal-title-${Math.random().toString(36).slice(2, 11)}`)
 
-/* ---------- смещение от низа (fallback‑переменная) ---------- */
-const offsetBottom = ref(0)
-
-/* ---------- методы ---------- */
+/* ------------------------------------------------------------------ */
+/* закрытие + Esc‑обработка                                           */
+/* ------------------------------------------------------------------ */
 function close() {
   emit('update:modelValue', false)
 }
@@ -27,41 +32,56 @@ function onKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape' && props.modelValue) close()
 }
 
-/* ---------- VisualViewport fallback ---------- */
-function updateViewportOffset() {
-  const vv = window.visualViewport
-  if (!vv) return
-  const delta = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop))
-  offsetBottom.value = delta
-}
+/* ------------------------------------------------------------------ */
+/* «прилипание» к клавиатуре                                          */
+/* ------------------------------------------------------------------ */
+const offsetBottom = ref(0) // резервируемое снизу пространство
+let detach: () => void // для удаления слушателей
 
 onMounted(() => {
   window.addEventListener('keydown', onKeydown)
 
-  /* env(keyboard‑inset‑height) поддерживают только новые Safari,
-     иначе включаем JS‑фоллбэк */
-  if (!CSS.supports('height: env(keyboard-inset-height)') && 'visualViewport' in window) {
-    updateViewportOffset()
-    window.visualViewport!.addEventListener('resize', updateViewportOffset)
+  /* Safari >= 17 умеет env(keyboard‑inset‑height) → JS не нужен */
+  if (CSS.supports('height: env(keyboard-inset-height)')) return
+
+  /* fallback для Telegram WKWebView, старых iOS, Android Chrome */
+  let baseHeight = window.innerHeight
+
+  const handler = () => {
+    const delta = baseHeight - window.innerHeight // «ушедшие» px
+    if (delta > 100) {
+      // клавиатура открыта
+      offsetBottom.value = delta
+    } else {
+      // закрыта / поворот
+      baseHeight = window.innerHeight
+      offsetBottom.value = 0
+    }
+  }
+
+  window.addEventListener('resize', handler)
+  window.addEventListener('orientationchange', handler)
+
+  detach = () => {
+    window.removeEventListener('resize', handler)
+    window.removeEventListener('orientationchange', handler)
   }
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', onKeydown)
-  if ('visualViewport' in window) {
-    window.visualViewport!.removeEventListener('resize', updateViewportOffset)
-  }
+  detach?.()
 })
 </script>
 
 <template>
   <Teleport to="body">
-    <!-- overlay -->
+    <!-- затемнение -->
     <Transition name="overlay-fade">
       <div v-if="modelValue" class="modal-overlay" @click.self="close" />
     </Transition>
 
-    <!-- modal -->
+    <!-- само окно -->
     <Transition name="slide-up">
       <div
         v-if="modelValue"
@@ -72,9 +92,7 @@ onBeforeUnmount(() => {
         :style="{ '--offset-bottom': offsetBottom + 'px' }"
       >
         <div class="modal-window">
-          <button class="modal-close" @click="close">
-            <CloseIcon />
-          </button>
+          <button class="modal-close" @click="close"><CloseIcon /></button>
 
           <header class="modal-header">
             <h2 class="title-1" :id="titleId">{{ title }}</h2>
@@ -90,7 +108,7 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped lang="scss">
-/* ---- overlay ---- */
+/* ====================== overlay ====================== */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -98,28 +116,29 @@ onBeforeUnmount(() => {
   z-index: 1500;
 }
 
-/* ---- wrapper ---- */
+/* ====================== wrapper ====================== */
 .modal-wrapper {
   position: fixed;
   inset: 0;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-end; /* «прижимаем» к низу */
   justify-content: center;
   overflow: auto;
   z-index: 2000;
 
-  /* «прилипание» к клавиатуре */
-  padding-bottom: calc(env(keyboard-inset-height, 0px) + var(--offset-bottom, 0px));
+  /* смещаем вверх ровно на высоту клавиатуры */
+  padding-bottom: calc(
+    env(keyboard-inset-height, 0px) + /* iOS 17+ */ var(--offset-bottom, 0px) /* JS‑fallback */
+  );
 }
 
-/* ---- window ---- */
+/* ====================== window ======================= */
 .modal-window {
   position: relative;
   width: 100%;
   max-width: 500px;
-  max-height: 95vh;
-
   padding: 16px 16px 30px;
+
   background: #1e2237;
   border-top: 5px solid var(--accent);
   border-radius: 20px 20px 0 0;
@@ -127,9 +146,16 @@ onBeforeUnmount(() => {
 
   overflow: auto;
   pointer-events: auto;
+
+  /* ограничиваем высоту только видимым viewport’ом */
+  max-height: 95vh; /* fallback */
+
+  @supports (height: 100dvh) {
+    max-height: 95dvh; /* современный mobile Safari / Chrome 115+ */
+  }
 }
 
-/* ---- close button ---- */
+/* ==================== close button =================== */
 .modal-close {
   position: absolute;
   top: 8px;
@@ -140,35 +166,38 @@ onBeforeUnmount(() => {
   }
 }
 
-/* ---- header ---- */
+/* ====================== header ======================= */
 .modal-header h2 {
   text-align: center;
   margin-bottom: 20px;
 }
 
-/* ---- overlay animation ---- */
+/* ==================== animations ===================== */
 .overlay-fade-enter-active,
 .overlay-fade-leave-active {
   transition: opacity 0.4s ease;
 }
+
 .overlay-fade-enter-from,
 .overlay-fade-leave-to {
   opacity: 0;
 }
+
 .overlay-fade-enter-to,
 .overlay-fade-leave-from {
   opacity: 1;
 }
 
-/* ---- slide‑up animation ---- */
 .slide-up-enter-active,
 .slide-up-leave-active {
   transition: transform 0.4s ease;
 }
+
 .slide-up-enter-from,
 .slide-up-leave-to {
   transform: translateY(100%);
 }
+
 .slide-up-enter-to,
 .slide-up-leave-from {
   transform: translateY(0);
