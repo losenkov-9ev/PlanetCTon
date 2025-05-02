@@ -46,11 +46,15 @@ defineProps<{
 </template>
 
 <style scoped lang="scss">
+@use '@/app/styles/mixins' as mixins;
+
 .planet-card {
   padding: 10px;
-  background-color: #19243b;
   border: 1px solid #32315f;
   border-radius: 10px;
+  @include mixins.bg-cover;
+  background-position: top right;
+  background-image: url('@/shared/assets/bg/planet-card-bg.png');
 }
 
 .card-title {
