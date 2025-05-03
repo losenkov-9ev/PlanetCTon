@@ -1,47 +1,63 @@
 <script setup lang="ts">
 import UiButton from '@/shared/ui/UiButton.vue'
 
-defineProps<{
+export interface Planet {
   name: string
   imageSrc: string
   income: number
   cost: number
   cycleTime: number
   earned: number
+}
+
+const props = defineProps<{
+  planet: Planet
+  index: number
 }>()
+
+const emit = defineEmits<{
+  (event: 'action-clicked', payload: { index: number; planet: Planet }): void
+}>()
+
+function handleClick() {
+  emit('action-clicked', {
+    index: props.index,
+    planet: props.planet,
+  })
+}
 </script>
 
 <template>
   <div class="planet-card">
-    <div class="card-title">{{ name }}</div>
+    <div class="card-title">{{ planet.name }}</div>
     <div class="card-body">
       <div class="card-image">
-        <img :src="imageSrc" alt="planet" />
+        <img :src="planet.imageSrc" alt="planet" />
       </div>
       <div class="card-content">
         <div class="card-line">
           <span>Доходность</span>
-          <span>{{ income }}%</span>
+          <span>{{ planet.income }}%</span>
         </div>
         <div class="card-line">
           <span>Стоимость</span>
           <span
-            >{{ cost }} TON <img src="@/shared/assets/currency/custom-ton.png" alt="ton"
+            >{{ planet.cost }} TON <img src="@/shared/assets/currency/custom-ton.png" alt="ton"
           /></span>
         </div>
         <div class="card-line">
           <span>Время цикла</span>
-          <span>{{ cycleTime }}ч</span>
+          <span>{{ planet.cycleTime }}ч</span>
         </div>
         <div class="card-line card-line--accent">
           <span>Заработано</span>
           <span
-            >{{ earned }} TON <img src="@/shared/assets/currency/custom-ton.png" alt="ton"
+            >{{ planet.earned }} TON <img src="@/shared/assets/currency/custom-ton.png" alt="ton"
           /></span>
         </div>
       </div>
     </div>
-    <UiButton>Атаковать</UiButton>
+    <UiButton @click="handleClick">Атаковать</UiButton>
   </div>
 </template>
 

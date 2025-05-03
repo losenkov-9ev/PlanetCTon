@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch, defineProps } from 'vue'
 import { useResizeObserver } from '@vueuse/core'
+
+import UfoImage from '@/shared/assets/bg/ufo.webp'
 import explosionSrc from '@/shared/assets/planets/expose.png'
+import PlanetImage from '@/shared/assets/planets/planet-1/level-0.png'
 
 interface FixedPoint {
   x: number
@@ -9,16 +12,30 @@ interface FixedPoint {
   rotation?: number
   scale?: number
 }
+
+export interface AttackSceneProps {
+  currentLevel: number
+  fixedPoints?: FixedPoint[]
+  planetSrc?: string
+  ufoSrc?: string
+}
+
 const EXPLOSION_DURATION = 1_500 // мс
 const EXPLOSION_BASE_SIZE = 100 // px
 const UFO_LANDING = { x: 0.7, y: 0.8 } as const
 
-const props = defineProps<{
-  currentLevel: number
-  fixedPoints: FixedPoint[]
-  planetSrc: string
-  ufoSrc: string
-}>()
+const props = withDefaults(defineProps<AttackSceneProps>(), {
+  ufoSrc: UfoImage,
+  planetSrc: PlanetImage,
+  fixedPoints: () => [
+    { x: 0.7, y: 0.8 },
+    { x: 0.85, y: 0.42, rotation: 120 },
+    { x: 0.22, y: 0.7, scale: 0.8 },
+    { x: 0.25, y: 0.3 },
+    { x: 0.6, y: 0.18 },
+    { x: 0.45, y: 0.5 },
+  ],
+})
 
 const container = ref<HTMLElement>()
 const canvas = ref<HTMLCanvasElement>()
