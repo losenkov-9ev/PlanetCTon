@@ -1,21 +1,27 @@
 <script setup lang="ts">
-import BalanceCard from '@/entities/BalanceCard.vue'
 import ComboPlanetCard from '@/features/ComboPlanetCard.vue'
+import UiButton from '@/shared/ui/UiButton.vue'
+import LanguageSelect from '@/shared/ui/LanguageSelect.vue'
+import FaqIcon from '@/shared/assets/icons/faq-icon.svg'
+import TonIcon from '@/shared/assets/icons/ton.svg'
+
+import { useRouter } from 'vue-router'
+import { AppRoutes } from '@/app/router/router.ts'
+
+const router = useRouter()
+const handleButtonClick = () => {
+  router.push(AppRoutes.FAQ)
+}
 </script>
 
 <template>
   <section class="dashboard">
-    <div class="balances">
-      <BalanceCard amount="2.336" currency="$CITY" bg="yellow">
-        <template #icon>
-          <img src="@/shared/assets/currency/city.webp" alt="" />
-        </template>
-      </BalanceCard>
-      <BalanceCard amount="2.336" currency="TON" bg="blue">
-        <template #icon>
-          <img src="@/shared/assets/currency/ton.webp" alt="" />
-        </template>
-      </BalanceCard>
+    <div class="home-header">
+      <button @click="handleButtonClick" class="faq-button"><FaqIcon /> FAQ</button>
+      <UiButton class="home-header-button" size="sm" color="blue">
+        <TonIcon />Connect Wallet
+      </UiButton>
+      <LanguageSelect />
     </div>
 
     <ComboPlanetCard />
@@ -23,6 +29,36 @@ import ComboPlanetCard from '@/features/ComboPlanetCard.vue'
 </template>
 
 <style scoped lang="scss">
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  .home-header-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--font);
+    text-align: center;
+    border-radius: 10px;
+  }
+
+  .faq-button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 10px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--font);
+    border-radius: 10px;
+    border: 1px solid #32315f;
+    background: rgba(30, 34, 55, 0.3);
+  }
+}
+
 .dashboard {
   display: flex;
   flex-direction: column;
