@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import UiButton from '@/shared/ui/UiButton.vue'
 import CopyButton from '@/shared/ui/CopyButton.vue'
+
+import { useRouter } from 'vue-router'
+import { AppRoutes } from '@/app/router/router.ts'
+
+const router = useRouter()
+const handleButtonClick = () => {
+  router.push(AppRoutes.FAQ)
+}
 </script>
 
 <template>
@@ -9,7 +17,7 @@ import CopyButton from '@/shared/ui/CopyButton.vue'
     <p><b>*</b>Переведите сумму <span>от 0.1 TON</span> на этот кошелёк</p>
 
     <div class="wallet-buttons">
-      <UiButton color="accent">Подключить кошелек</UiButton>
+      <UiButton @click="handleButtonClick" color="accent">Подключить кошелек</UiButton>
       <CopyButton />
     </div>
   </div>
