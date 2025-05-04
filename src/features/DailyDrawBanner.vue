@@ -1,25 +1,30 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import UiButton from '@/shared/ui/UiButton.vue'
-import CongratsDialog from '@/features/dialogs/CongratsDialog.vue'
 
-const showCongratsDialog = ref(false)
-const giftTypes = ['deskcalendar', 'lolpop', 'bdaycandle']
-const currentTypeIndex = ref(0)
-const currentAnimation = ref(generateNextAnimation())
+import animation1 from '@/shared/assets/animations/deskcalendar-1.json'
+import animation2 from '@/shared/assets/animations/deskcalendar-2.json'
+import animation3 from '@/shared/assets/animations/lolpop-1.json'
+import animation4 from '@/shared/assets/animations/lolpop-2.json'
+import animation5 from '@/shared/assets/animations/bdaycandle-1.json'
+import animation6 from '@/shared/assets/animations/bdaycandle-2.json'
 
+const animations = [animation1, animation2, animation3, animation4, animation5, animation6]
+
+const currentAnimation = ref(animations[0])
 let intervalId: number | undefined
 
-function generateNextAnimation(): string {
-  const type = giftTypes[currentTypeIndex.value]
-  const randomId = Math.floor(Math.random() * 20000) + 10
-  currentTypeIndex.value = (currentTypeIndex.value + 1) % giftTypes.length
-  return `https://nft.fragment.com/gift/${type}-${randomId}.lottie.json`
-}
+const rerenderAnimation = ref<number>(-1)
+
+const showCongratsDialog = ref(false)
 
 onMounted(() => {
+  let index = 0
   intervalId = setInterval(() => {
-    currentAnimation.value = generateNextAnimation()
+    rerenderAnimation.value++
+
+    index = (index + 1) % animations.length
+    currentAnimation.value = animations[index]
   }, 5000)
 })
 
@@ -64,7 +69,7 @@ onBeforeUnmount(() => {
     <div class="daily-draw-inner">
       <div class="banner-icon-wrapper">
         <transition name="fade">
-          <div :key="currentAnimation" class="banner-icon fade-container">
+          <div :key="rerenderAnimation" class="banner-icon fade-container">
             <lottie-player :src="currentAnimation" background="transparent" speed="1" autoplay />
           </div>
         </transition>
