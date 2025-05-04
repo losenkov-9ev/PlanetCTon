@@ -3,7 +3,8 @@ import StatisticsCard from '@/entities/StatisticsCard.vue'
 import UsersIcon from '@/shared/assets/icons/users.svg'
 import LightningIcon from '@/shared/assets/icons/lightning.svg'
 import PlanetIcon from '@/shared/assets/icons/planet.svg'
-import PlayIcon from '@/shared/assets/icons/play.svg'
+
+import TonIcon from '@/shared/assets/icons/ton.svg'
 </script>
 
 <template>
@@ -12,7 +13,7 @@ import PlayIcon from '@/shared/assets/icons/play.svg'
     <div class="statistics-inner">
       <StatisticsCard
         value="245 210"
-        color="#0088e5"
+        color="#763FF1"
         count="1 613"
         text="Пользователи, которые уже зарабатывают с PlanetCTon"
       >
@@ -29,8 +30,8 @@ import PlayIcon from '@/shared/assets/icons/play.svg'
       <StatisticsCard value="326" color="#FBA704" count="7" text="Всего куплено планет">
         <PlanetIcon />
       </StatisticsCard>
-      <StatisticsCard value="2 903" count="14" color="#763FF1" text="Пройдено уровней">
-        <PlayIcon />
+      <StatisticsCard value="2 903" count="14" color="#27aff9" text="Пройдено уровней">
+        <TonIcon stroke-width="0" />
       </StatisticsCard>
     </div>
   </div>
