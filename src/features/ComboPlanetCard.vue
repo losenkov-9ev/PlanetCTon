@@ -52,7 +52,7 @@ const handleButtonClick = () => {
       Начни всего с <span>1 TON</span>
     </div>
 
-    <UiButton class="combo-planet-button" @click="handleButtonClick" size="sm" color="blue">
+    <UiButton class="combo-planet-button" @click="handleButtonClick" color="blue">
       НАЧАТЬ СЕЙЧАС
     </UiButton>
   </div>
@@ -88,7 +88,7 @@ const handleButtonClick = () => {
   font-size: 16px;
   font-weight: 600;
   color: var(--font);
-  margin-bottom: 6px;
+  margin-bottom: 10px;
   margin-right: -10px;
   margin-left: -10px;
   padding: 0 10px;
@@ -105,6 +105,7 @@ const handleButtonClick = () => {
   margin-bottom: 14px;
   position: relative;
   z-index: 10;
+  font-size: 16px;
 
   img {
     width: 31px;
@@ -120,7 +121,9 @@ const handleButtonClick = () => {
 .combo-planet-button {
   color: var(--font);
   position: relative;
-  z-index: 10;
+  padding-left: 40px;
+  padding-right: 40px;
   width: auto;
+  z-index: 10;
 }
 </style>
