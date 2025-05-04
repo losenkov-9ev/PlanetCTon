@@ -2,7 +2,6 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import UiButton from '@/shared/ui/UiButton.vue'
 
-// массив ссылок на анимации
 const animations = [
   'https://nft.fragment.com/gift/deskcalendar-112312.lottie.json',
   'https://nft.fragment.com/gift/deskcalendar-112313.lottie.json',
@@ -115,6 +114,11 @@ onBeforeUnmount(() => {
     span {
       color: #eda400;
     }
+  }
+
+  .content {
+    max-width: 100%;
+    width: 100%;
   }
 }
 
