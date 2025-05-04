@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import MainDashboard from '@/widgets/MainDashboard.vue'
-import PlanetPanel from '@/widgets/PlanetPanel/PlanetPanel.vue'
+import MainStatistics from '@/widgets/MainStatistics.vue'
+import LastWithdrawals from '@/widgets/LastWithdrawals.vue'
 </script>
 
 <template>
@@ -10,7 +11,8 @@ import PlanetPanel from '@/widgets/PlanetPanel/PlanetPanel.vue'
 
     <div class="page-wrapper">
       <MainDashboard />
-      <PlanetPanel />
+      <MainStatistics />
+      <LastWithdrawals />
     </div>
   </div>
 </template>
