@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, toRef } from 'vue'
+import { defineProps, defineEmits } from 'vue'
 import UiButton from '@/shared/ui/UiButton.vue'
 import UiDialog from '@/shared/ui/UiDialog.vue'
 
 interface Props {
   modelValue: boolean
+  text?: string
 }
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  text: 'Вы успешно атаковали планету!',
+})
 
 const emit = defineEmits<{
   (e: 'update:modelValue', v: boolean): void
@@ -21,7 +24,7 @@ function close() {
   <UiDialog :model-value="props.modelValue" @update:modelValue="emit('update:modelValue', $event)">
     <div class="congrats-modal">
       <h2 class="modal-title title-1">Поздравляем!</h2>
-      <p class="modal-text">Вы успешно атаковали планету!</p>
+      <p class="modal-text">{{ text }}</p>
       <UiButton @click="close" color="accent" class="congrats-modal-btn"> Продолжить </UiButton>
     </div>
   </UiDialog>

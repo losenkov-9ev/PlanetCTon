@@ -1,26 +1,25 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import UiButton from '@/shared/ui/UiButton.vue'
+import CongratsDialog from '@/features/dialogs/CongratsDialog.vue'
 
-const animations = [
-  'https://nft.fragment.com/gift/deskcalendar-112312.lottie.json',
-  'https://nft.fragment.com/gift/deskcalendar-112313.lottie.json',
+const showCongratsDialog = ref(false)
+const giftTypes = ['deskcalendar', 'lolpop', 'bdaycandle']
+const currentTypeIndex = ref(0)
+const currentAnimation = ref(generateNextAnimation())
 
-  'https://nft.fragment.com/gift/lolpop-260968.lottie.json',
-  'https://nft.fragment.com/gift/lolpop-26968.lottie.json',
-
-  'https://nft.fragment.com/gift/bdaycandle-107118.lottie.json',
-  'https://nft.fragment.com/gift/bdaycandle-10718.lottie.json',
-]
-
-const currentAnimation = ref(animations[0])
 let intervalId: number | undefined
 
+function generateNextAnimation(): string {
+  const type = giftTypes[currentTypeIndex.value]
+  const randomId = Math.floor(Math.random() * 25000) + 1
+  currentTypeIndex.value = (currentTypeIndex.value + 1) % giftTypes.length
+  return `https://nft.fragment.com/gift/${type}-${randomId}.lottie.json`
+}
+
 onMounted(() => {
-  let index = 0
   intervalId = setInterval(() => {
-    index = (index + 1) % animations.length
-    currentAnimation.value = animations[index]
+    currentAnimation.value = generateNextAnimation()
   }, 5000)
 })
 
@@ -75,9 +74,11 @@ onBeforeUnmount(() => {
           Розыгрыш <span>10 подарков</span><br />
           каждый день
         </div>
-        <UiButton color="yellow">Участвовать</UiButton>
+        <UiButton @click="showCongratsDialog = true" color="yellow">Участвовать</UiButton>
       </div>
     </div>
+
+    <CongratsDialog text="Вы приняли участие в розыгрыше" v-model="showCongratsDialog" />
   </div>
 </template>
 
