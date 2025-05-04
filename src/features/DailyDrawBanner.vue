@@ -12,7 +12,7 @@ let intervalId: number | undefined
 
 function generateNextAnimation(): string {
   const type = giftTypes[currentTypeIndex.value]
-  const randomId = Math.floor(Math.random() * 25000) + 1
+  const randomId = Math.floor(Math.random() * 20000) + 10
   currentTypeIndex.value = (currentTypeIndex.value + 1) % giftTypes.length
   return `https://nft.fragment.com/gift/${type}-${randomId}.lottie.json`
 }
