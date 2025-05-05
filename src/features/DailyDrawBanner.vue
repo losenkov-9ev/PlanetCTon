@@ -8,6 +8,7 @@ import animation3 from '@/shared/assets/animations/lolpop-1.json'
 import animation4 from '@/shared/assets/animations/lolpop-2.json'
 import animation5 from '@/shared/assets/animations/bdaycandle-1.json'
 import animation6 from '@/shared/assets/animations/bdaycandle-2.json'
+import CongratsDialog from '@/features/dialogs/CongratsDialog.vue'
 
 const animations = [animation1, animation2, animation3, animation4, animation5, animation6]
 
@@ -17,6 +18,10 @@ let intervalId: number | undefined
 const rerenderAnimation = ref<number>(-1)
 
 const showCongratsDialog = ref(false)
+
+const handleButtonClick = () => {
+  showCongratsDialog.value = true
+}
 
 onMounted(() => {
   let index = 0
@@ -79,7 +84,7 @@ onBeforeUnmount(() => {
           Розыгрыш <span>10 подарков</span><br />
           каждый день
         </div>
-        <UiButton @click="showCongratsDialog = true" color="yellow">Участвовать</UiButton>
+        <UiButton @click="handleButtonClick" color="yellow">Участвовать</UiButton>
       </div>
     </div>
 

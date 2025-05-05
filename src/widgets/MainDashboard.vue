@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ComboPlanetCard from '@/features/ComboPlanetCard.vue'
+import ComboPlanetCard from '@/features/ComboPlanetBanner.vue'
 import UiButton from '@/shared/ui/UiButton.vue'
 import LanguageSelect from '@/shared/ui/LanguageSelect.vue'
 import FaqIcon from '@/shared/assets/icons/faq-icon.svg'
@@ -13,13 +13,17 @@ const router = useRouter()
 const handleButtonClick = () => {
   router.push(AppRoutes.FAQ)
 }
+
+const handleWalletClick = () => {
+  router.push(AppRoutes.ROULETTE)
+}
 </script>
 
 <template>
   <section class="dashboard">
     <div class="home-header">
       <button @click="handleButtonClick" class="faq-button"><FaqIcon /> FAQ</button>
-      <UiButton class="home-header-button" size="sm" color="blue">
+      <UiButton @click="handleWalletClick" class="home-header-button" size="sm" color="blue">
         <TonIcon />Connect Wallet
       </UiButton>
       <LanguageSelect />

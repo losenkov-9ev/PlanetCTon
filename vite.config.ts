@@ -8,7 +8,18 @@ import svgLoader from 'vite-svg-loader'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue(), vueJsx(), vueDevTools(), svgLoader()],
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag === 'lottie-player',
+        },
+      },
+    }),
+    vueJsx(),
+    vueDevTools(),
+    svgLoader(),
+  ],
   server: {
     host: true, // или можно указать конкретный IP, например '0.0.0.0'
   },
