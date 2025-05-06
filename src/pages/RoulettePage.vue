@@ -62,7 +62,10 @@ const showLoot = ref(false)
 
 onMounted(() => {
   nextTick(() => {
-    if (!cardRef.value || !windowRef.value || !trackRef.value) return
+    if (!cardRef.value || !windowRef.value || !trackRef.value) {
+      console.log(cardRef.value, windowRef.value, trackRef.value)
+      return
+    }
 
     slideStep.value = CARD_WIDTH + SLIDE_GAP
     centerOff.value = windowRef.value.offsetWidth / 2 - CARD_WIDTH / 2 - 30
