@@ -220,7 +220,6 @@ function recenter() {
 }
 .roulette-track {
   display: flex;
-  will-change: transform;
 }
 
 .card {
