@@ -1,11 +1,25 @@
 <script setup lang="ts">
-import { ref, nextTick } from 'vue'
-import { Swiper, SwiperSlide } from 'swiper/vue'
-import type { Swiper as SwiperClass } from 'swiper'
-import 'swiper/css'
+import { ref, onMounted, nextTick } from 'vue'
+import axios from 'axios'
+import gsap from 'gsap'
+
 import UiButton from '@/shared/ui/UiButton.vue'
 import SpinPriceCard from '@/entities/SpinPriceCard.vue'
 import DailyDrawBanner from '@/features/DailyDrawBanner.vue'
+import CongratsDialog from '@/features/dialogs/CongratsDialog.vue'
+
+import NftImage1 from '@/shared/assets/nfts/nft-1.webp'
+import NftImage2 from '@/shared/assets/nfts/nft-2.webp'
+import NftImage3 from '@/shared/assets/nfts/nft-3.webp'
+import NftImage4 from '@/shared/assets/nfts/nft-4.webp'
+import NftImage5 from '@/shared/assets/nfts/nft-5.webp'
+
+const PASSES = 8 // «пустых» оборотов
+const TOTAL_DURATION = 4500 // длительность спина, мс
+const SLOW_PHASE_SLIDES = 5 // сколько слайдов едем медленно
+const LOOPS_IN_DOM = 30 // длина ленты = 60 * 5 = 300 карт
+const SLIDE_GAP = 10 // расстояние между карточками
+const CARD_WIDTH = 140 // ширина карточки
 
 interface Prize {
   id: number
@@ -13,126 +27,141 @@ interface Prize {
   title: string
 }
 
-const baseItems = ref<Prize[]>([
-  { id: 1, image: 'https://nft.fragment.com/gift/deskcalendar-112312.webp', title: 'PEPE' },
-  { id: 2, image: 'https://nft.fragment.com/gift/deskcalendar-112313.webp', title: 'HAPPY' },
-  { id: 3, image: 'https://nft.fragment.com/gift/lolpop-260968.webp', title: 'COIN' },
-  { id: 4, image: 'https://nft.fragment.com/gift/lolpop-26968.webp', title: 'ROCKET' },
-  { id: 5, image: 'https://nft.fragment.com/gift/bdaycandle-107118.webp', title: 'DIAMOND' },
-])
+const basePrizes: Prize[] = [
+  { id: 1, image: NftImage1, title: 'PEPE' },
+  { id: 2, image: NftImage2, title: 'HAPPY' },
+  { id: 3, image: NftImage3, title: 'COIN' },
+  { id: 4, image: NftImage4, title: 'ROCKET' },
+  { id: 5, image: NftImage5, title: 'DIAMOND' },
+]
+const CYCLE = basePrizes.length
 
-const CYCLE = baseItems.value.length
-
-const slides = ref<(Prize & { _uid: string })[]>([])
-const INITIAL_LOOPS = 40
-const CENTRAL_OFFSET_CYCLES = 10
-let initialized = false
-
-function pushLoops(loopCount: number) {
-  const start = slides.value.length / CYCLE
-  for (let i = start; i < start + loopCount; i++) {
-    slides.value.push(
-      ...baseItems.value.map((p) => ({
-        ...p,
-        _uid: `${i}-${p.id}-${Date.now()}`,
-      })),
-    )
-  }
+type PrizeExt = Prize & { uid: string }
+const items = ref<PrizeExt[]>([])
+for (let loop = 0; loop < LOOPS_IN_DOM; loop++) {
+  items.value.push(
+    ...basePrizes.map((p) => ({
+      ...p,
+      uid: `${loop}-${p.id}`,
+    })),
+  )
 }
 
-pushLoops(INITIAL_LOOPS)
+const trackRef = ref<HTMLDivElement | null>(null)
+const windowRef = ref<HTMLDivElement | null>(null)
+const cardRef = ref<HTMLDivElement | null>(null)
 
-const swiperRef = ref<SwiperClass | null>(null)
-function initSwiper(s: SwiperClass) {
-  swiperRef.value = s
-  nextTick(() => {
-    if (!initialized) {
-      const index = CENTRAL_OFFSET_CYCLES * CYCLE
-      s.slideTo(index, 0)
-      initialized = true
-    }
-  })
-}
+const slideStep = ref(0)
+const centerOff = ref(0)
+
+const curIndex = ref(0)
 
 const isSpinning = ref(false)
+const lootObj = ref<Prize>(basePrizes[0])
+const showLoot = ref(false)
+
+onMounted(() => {
+  nextTick(() => {
+    if (!cardRef.value || !windowRef.value || !trackRef.value) return
+
+    slideStep.value = CARD_WIDTH + SLIDE_GAP
+    centerOff.value = windowRef.value.offsetWidth / 2 - CARD_WIDTH / 2 - 30
+
+    curIndex.value = Math.floor(LOOPS_IN_DOM / 2) * CYCLE
+    gsap.set(trackRef.value, { x: calcX(curIndex.value) })
+  })
+})
+
+function calcX(index: number) {
+  return centerOff.value - index * slideStep.value
+}
+
+interface SpinResponse {
+  prize_id: number
+}
 
 async function spin() {
-  if (isSpinning.value || !swiperRef.value) return
+  if (isSpinning.value || !trackRef.value) return
   isSpinning.value = true
 
+  let prizeId = 0
   try {
-    const { prize_id }: { prize_id: number } = await (
-      await fetch('https://twinbyai.ru/spin')
-    ).json()
-
-    const winIndexInCycle = baseItems.value.findIndex((p) => p.id === prize_id)
-    if (winIndexInCycle === -1) throw new Error(`Unknown prize_id ${prize_id}`)
-
-    let currentActive = swiperRef.value.activeIndex || 0
-    const leftGap = currentActive
-    const rightGap = slides.value.length - currentActive
-
-    const SAFE_MARGIN = CYCLE * 5
-
-    if (leftGap < SAFE_MARGIN || rightGap < SAFE_MARGIN) {
-      const normalized = CENTRAL_OFFSET_CYCLES * CYCLE + (currentActive % CYCLE)
-      swiperRef.value.slideTo(normalized, 0)
-      currentActive = normalized
-    }
-
-    const PASSES = 8
-
-    const needLength = currentActive + PASSES * CYCLE + CYCLE + 2
-    while (slides.value.length <= needLength) pushLoops(10)
-
-    const deltaWithinCycle = (winIndexInCycle - (currentActive % CYCLE) + CYCLE) % CYCLE
-    const targetIndex = currentActive + PASSES * CYCLE + deltaWithinCycle
-
-    const randomNext = baseItems.value[Math.floor(Math.random() * baseItems.value.length)]
-    slides.value[targetIndex + 1] = {
-      ...randomNext,
-      _uid: `rnd-${Date.now()}-${randomNext.id}`,
-    }
-
-    await nextTick()
-    swiperRef.value.slideTo(targetIndex, 4500)
-
-    const stop = () => {
-      isSpinning.value = false
-      swiperRef.value?.off('transitionEnd', stop)
-    }
-    swiperRef.value.on('transitionEnd', stop)
-  } catch (e) {
-    console.error('[roulette] spin error', e)
+    const { data } = await axios.get<SpinResponse>('https://twinbyai.ru/spin')
+    prizeId = data.prize_id
+  } catch (err) {
+    console.error('[roulette] spin error', err)
     isSpinning.value = false
+    return
   }
+
+  const winInCycle = basePrizes.findIndex((p) => p.id === prizeId)
+  if (winInCycle === -1) {
+    isSpinning.value = false
+    return
+  }
+  lootObj.value = basePrizes[winInCycle]
+
+  const deltaWithinCycle = (winInCycle - (curIndex.value % CYCLE) + CYCLE) % CYCLE
+  const targetIndex = curIndex.value + PASSES * CYCLE + deltaWithinCycle
+  const slowStart = targetIndex - SLOW_PHASE_SLIDES
+
+  const fastDur = Math.round(TOTAL_DURATION * 0.65)
+  const slowDur = TOTAL_DURATION - fastDur
+
+  gsap
+    .timeline()
+    .to(trackRef.value, {
+      // быстрая фаза
+      x: calcX(slowStart),
+      duration: fastDur / 1000,
+      ease: 'linear',
+    })
+    .to(trackRef.value, {
+      // замедление
+      x: calcX(targetIndex),
+      duration: slowDur / 1000,
+      ease: 'power1.out',
+      onComplete: () => {
+        curIndex.value = targetIndex
+        recenter()
+        showLoot.value = true
+        isSpinning.value = false
+      },
+    })
+}
+
+function recenter() {
+  if (!trackRef.value) return
+  const mod = curIndex.value % CYCLE
+  curIndex.value = Math.floor(LOOPS_IN_DOM / 2) * CYCLE + mod
+  gsap.set(trackRef.value, { x: calcX(curIndex.value) })
 }
 </script>
 
 <template>
   <div class="page roulette-page">
+    <!-- заголовок + баннер -->
     <div class="roulette-content">
       <h2 class="title title-1">Рулетка</h2>
       <DailyDrawBanner />
     </div>
+
     <div class="roulette-wrapper">
       <div class="roulette-marker" />
 
-      <Swiper
-        @swiper="initSwiper"
-        class="roulette-swiper"
-        :slides-per-view="3"
-        :space-between="10"
-        :centered-slides="true"
-        :allow-touch-move="false"
-      >
-        <SwiperSlide v-for="s in slides" :key="s._uid" class="slide">
-          <div class="card">
-            <img :src="s.image" :alt="s.title" class="card-img" />
-            <span class="card-title">{{ s.title }}</span>
+      <div class="roulette-window" ref="windowRef">
+        <div class="roulette-track" ref="trackRef">
+          <div
+            v-for="(p, i) in items"
+            :key="p.uid"
+            class="card"
+            :ref="i === 0 ? 'cardRef' : undefined"
+          >
+            <img :src="p.image" :alt="p.title" class="card-img" />
+            <span class="card-title">{{ p.title }}</span>
           </div>
-        </SwiperSlide>
-      </Swiper>
+        </div>
+      </div>
     </div>
 
     <div class="roulette-controls">
@@ -141,6 +170,12 @@ async function spin() {
         {{ isSpinning ? 'Крутим…' : 'Крутить' }}
       </UiButton>
     </div>
+
+    <CongratsDialog
+      :image-src="lootObj.image"
+      :text="`Вы выиграли ${lootObj.title}`"
+      v-model="showLoot"
+    />
   </div>
 </template>
 
@@ -155,14 +190,17 @@ async function spin() {
   padding-left: 0;
 }
 
+.title {
+  margin-bottom: 16px;
+}
+
 .roulette-wrapper {
   position: relative;
-  width: 100%;
   max-width: 560px;
+  width: 100%;
   margin: 0 auto;
-  padding: 20px 0 20px;
+  padding: 20px 0;
   background: #0b0d23;
-  border-radius: 0px;
 }
 
 .roulette-marker {
@@ -176,41 +214,33 @@ async function spin() {
   z-index: 10;
 }
 
-.roulette-swiper {
+.roulette-window {
   overflow: hidden;
   padding: 0 32px;
 }
-
-.title {
-  margin-bottom: 20px;
-}
-
-.slide {
-  width: 140px !important;
+.roulette-track {
   display: flex;
-  justify-content: center;
+  will-change: transform;
 }
 
 .card {
-  width: 100%;
+  width: 140px;
+  flex-shrink: 0;
+  margin-right: 10px;
   background: #1e203d;
   border-radius: 10px;
-  padding: 6px;
-  padding-bottom: 3px;
+  padding: 6px 6px 3px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
 }
-
 .card-img {
   width: 128px;
   height: 128px;
   object-fit: contain;
   border-radius: 10px;
 }
-
 .card-title {
   margin-top: 4px;
   font-size: 16px;
@@ -219,7 +249,9 @@ async function spin() {
 }
 
 .roulette-controls {
-  padding: 16px;
-  padding-bottom: 0;
+  padding: 0 16px 16px;
+}
+.spin-btn {
+  margin-left: auto;
 }
 </style>
