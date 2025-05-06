@@ -68,7 +68,9 @@ onMounted(() => {
     centerOff.value = windowRef.value.offsetWidth / 2 - CARD_WIDTH / 2 - 30
 
     curIndex.value = Math.floor(LOOPS_IN_DOM / 2) * CYCLE
-    gsap.set(trackRef.value, { x: calcX(curIndex.value) })
+    requestAnimationFrame(() => {
+      gsap.set(trackRef.value, { x: calcX(curIndex.value) })
+    })
   })
 })
 
