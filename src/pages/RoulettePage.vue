@@ -71,9 +71,8 @@ onMounted(() => {
     centerOff.value = windowRef.value.offsetWidth / 2 - CARD_WIDTH / 2 - 30
 
     curIndex.value = Math.floor(LOOPS_IN_DOM / 2) * CYCLE
-    requestAnimationFrame(() => {
-      gsap.set(trackRef.value, { x: calcX(curIndex.value) })
-    })
+
+    gsap.set(trackRef.value, { x: calcX(curIndex.value) })
   })
 })
 
@@ -156,12 +155,7 @@ function recenter() {
 
       <div class="roulette-window" ref="windowRef">
         <div class="roulette-track" ref="trackRef">
-          <div
-            v-for="(p, i) in items"
-            :key="p.uid"
-            class="card"
-            :ref="i === 0 ? 'cardRef' : undefined"
-          >
+          <div v-for="p in items" :key="p.uid" class="card">
             <img :src="p.image" :alt="p.title" class="card-img" />
             <span class="card-title">{{ p.title }}</span>
           </div>
@@ -181,6 +175,13 @@ function recenter() {
       :text="`Вы выиграли ${lootObj.title}`"
       v-model="showLoot"
     />
+
+    <div style="visibility: hidden; position: absolute; pointer-events: none">
+      <div ref="cardRef" class="card">
+        <img :src="basePrizes[0].image" alt="" class="card-img" />
+        <span class="card-title">{{ basePrizes[0].title }}</span>
+      </div>
+    </div>
   </div>
 </template>
 
