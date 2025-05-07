@@ -19,7 +19,7 @@ const handleButtonClick = () => {
   <section class="dashboard">
     <div class="home-header">
       <button @click="handleButtonClick" class="faq-button"><FaqIcon /> FAQ</button>
-      <UiButton @click="handleWalletClick" class="home-header-button" size="sm" color="blue">
+      <UiButton class="home-header-button" size="sm" color="blue">
         <TonIcon />Connect Wallet
       </UiButton>
       <LanguageSelect />
