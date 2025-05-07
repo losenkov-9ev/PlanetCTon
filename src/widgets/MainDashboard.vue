@@ -8,6 +8,7 @@ import TonIcon from '@/shared/assets/icons/ton.svg'
 import { useRouter } from 'vue-router'
 import { AppRoutes } from '@/app/router/router.ts'
 import RouletteBanner from '@/features/RouletteBanner.vue'
+import DailyDrawBanner from '@/features/DailyDrawBanner.vue'
 
 const router = useRouter()
 const handleButtonClick = () => {
@@ -24,6 +25,7 @@ const handleButtonClick = () => {
       </UiButton>
       <LanguageSelect />
     </div>
+    <DailyDrawBanner />
     <RouletteBanner />
     <ComboPlanetCard />
   </section>
