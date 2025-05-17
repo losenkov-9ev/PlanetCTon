@@ -7,4 +7,5 @@ export enum AppRoutes {
   PLANETS = '/planets',
   FAQ = '/faq',
   ROULETTE = '/roulette',
+  CRASH = '/crash',
 }

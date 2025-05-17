@@ -14,13 +14,17 @@ const router = useRouter()
 const handleButtonClick = () => {
   router.push(AppRoutes.FAQ)
 }
+
+const handleConnectWalletClick = () => {
+  router.push(AppRoutes.CRASH)
+}
 </script>
 
 <template>
   <section class="dashboard">
     <div class="home-header">
       <button @click="handleButtonClick" class="faq-button"><FaqIcon /> FAQ</button>
-      <UiButton class="home-header-button" size="sm" color="blue">
+      <UiButton @click="handleConnectWalletClick" class="home-header-button" size="sm" color="blue">
         <TonIcon />Connect Wallet
       </UiButton>
       <LanguageSelect />

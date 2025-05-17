@@ -12,6 +12,7 @@ interface CustomInput {
 interface UiInputProps {
   tip?: string
   error?: string
+  size?: 'default' | 'sm'
   custom?: CustomInput
 }
 
@@ -60,7 +61,7 @@ const handleCopyClick = async () => {
   <div class="ui-input">
     <div v-if="tip" class="ui-input-tip">{{ tip }}</div>
     <div class="ui-input-wrapper">
-      <input ref="inputRef" v-bind="$attrs" />
+      <input ref="inputRef" v-bind="$attrs" :class="[size, { custom: 'custom-input' }]" />
 
       <div class="ui-input-custom">
         <button v-if="custom?.type === 'max'" @click="handleMaxClick" class="max-value">
@@ -152,7 +153,14 @@ const handleCopyClick = async () => {
     border: 1px solid #32315f;
     outline: none;
     color: var(--font);
-    padding-right: 40px;
+
+    &.sm {
+      padding: 8px 10px;
+    }
+
+    &.custom-input {
+      padding-right: 40px;
+    }
 
     &:focus {
       border: 1px solid var(--accent);
