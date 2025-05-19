@@ -63,6 +63,7 @@ onUnmounted(() => {
   }
   .crash-wrapper {
     background: rgba(30, 34, 55, 0.5);
+    border: 1px solid #32315f;
     backdrop-filter: blur(8px);
     margin-top: 24px;
     overflow: hidden;
