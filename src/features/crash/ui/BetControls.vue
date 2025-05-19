@@ -19,16 +19,6 @@
           </div>
         </UiInput>
         <button @click="$emit('update:amount', (amount += 0.1))">+</button>
-        <UiInput
-          class="x-input"
-          size="sm"
-          placeholder="1.01"
-          value="1.01"
-          :min="1.01"
-          :custom="{ type: 'icon' }"
-        >
-          X
-        </UiInput>
       </div>
       <div class="add-buttons">
         <button @click="$emit('update:amount', (amount += 0.1))">+0.1</button>
@@ -79,7 +69,7 @@ watch(amount, (val) => emit('update:amount', parseFloat(val.toFixed(1))))
 
     button {
       padding: 4px 10px;
-      border: 2px solid #273cf9;
+      border: 2px solid var(--accent);
       max-width: 100%;
       width: 100%;
       color: #ffffff;
@@ -96,8 +86,7 @@ watch(amount, (val) => emit('update:amount', parseFloat(val.toFixed(1))))
       width: 32px;
       height: 32px;
       border-radius: 4px;
-      background-color: #273cf9;
-      color: #ffffff;
+      background-color: var(--accent);
       font-size: 16px;
       display: flex;
       justify-content: center;

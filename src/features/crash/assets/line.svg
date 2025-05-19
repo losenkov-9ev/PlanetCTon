@@ -10,7 +10,7 @@
         </linearGradient>
         <linearGradient id="grad_stroke" x1="0" x2="1" y1="0" y2="1">
             <stop stop-color="#27aff9"/>
-            <stop offset=".787" stop-color="#273cf9"/>
+            <stop offset=".787" stop-color="#6CEAF1"/>
             <stop offset="1" stop-color="#2824fc" stop-opacity="0"/>
         </linearGradient>
     </defs>

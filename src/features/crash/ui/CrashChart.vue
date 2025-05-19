@@ -125,9 +125,9 @@ watch(
   <img
     class="ufo"
     :class="{ show: props.status, bob: ufoBob }"
-    src="@/shared/assets/icons/crash-ufo.png"
+    src="../assets/rocket.svg"
     alt="ufo"
-    :style="{ top: `${ufoPos.top - 20}px`, left: `${ufoPos.left - 60}px` }"
+    :style="{ top: `${ufoPos.top - 50}px`, left: `${ufoPos.left - 60}px` }"
   />
   <div class="chart-wrapper" ref="wrapper">
     <div :class="['start-view', { show: status }]">
@@ -191,8 +191,8 @@ watch(
   top: 50%;
   transform: translateY(-50%);
   padding: 20px 0;
-  border-top: 2px solid #273cf9;
-  border-bottom: 2px solid #273cf9;
+  border-top: 2px solid var(--accent);
+  border-bottom: 2px solid var(--accent);
   right: 0;
   left: 0;
   text-align: center;
@@ -200,7 +200,7 @@ watch(
   font-size: 20px;
   line-height: 24px;
   span {
-    color: #273cf9;
+    color: var(--accent);
   }
 
   &.show {
