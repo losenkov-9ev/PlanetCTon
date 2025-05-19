@@ -16,7 +16,9 @@ function updateRound(round: CrashRound) {
 
 function handleCrash() {
   console.log('Crash at', currentMultiplier.value)
-  isGame.value = false
+  setTimeout(() => {
+    isGame.value = false
+  }, 3000)
 }
 
 function placeBet() {
@@ -38,9 +40,10 @@ onUnmounted(() => {
   <div class="page crash-page">
     <div class="title title-1">Crash</div>
     <div class="crash-wrapper">
-      <CrashChart :status="isGame" />
-      <BetControls v-model:amount="betAmount" @bet="placeBet" />
-      <div class="current-multiplier">x{{ currentMultiplier.toFixed(2) }}</div>
+      <CrashChart :status="isGame">
+        <div class="current-multiplier">x{{ currentMultiplier.toFixed(2) }}</div>
+      </CrashChart>
+      <BetControls v-model:amount="betAmount" @bet="placeBet" :status="isGame" />
     </div>
   </div>
 </template>
@@ -50,13 +53,20 @@ onUnmounted(() => {
   .current-multiplier {
     text-align: center;
     font-size: 24px;
-    margin-top: 12px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+    font-weight: 900;
+    color: var(--font);
   }
   .crash-wrapper {
     background: rgba(30, 34, 55, 0.5);
     backdrop-filter: blur(8px);
     margin-top: 24px;
-    padding: 16px;
+    overflow: hidden;
+    //padding: 16px;
     border-radius: 8px;
   }
 }

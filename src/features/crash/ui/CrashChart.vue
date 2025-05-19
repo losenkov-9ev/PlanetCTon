@@ -10,7 +10,7 @@ const wrapper = ref<HTMLElement | null>(null)
 const lineComp = ref<VueInstance | null>(null)
 
 const finalLinePos = ref({ top: 0, left: 0 })
-const ufoPos = ref({ top: -999, left: -999 })
+const ufoPos = ref({ top: 200, left: -999 })
 
 // Флаг для запуска «покачивания» НЛО
 const ufoBob = ref(false)
@@ -58,7 +58,7 @@ async function precomputeLine() {
   // возвращаем как было
   lineEl.classList.remove('show')
   lineEl.style.opacity = ''
-  nextTick(() => {
+  await nextTick(() => {
     lineEl.style.transition = 'all 1s'
   })
 }
@@ -83,10 +83,11 @@ watch(
       }
 
       // растём линия
-      lineEl.classList.add('show')
-      await nextTick()
-      // перемещаем НЛО в конец линии
       ufoPos.value = finalLinePos.value
+      await nextTick()
+      lineEl.classList.add('show')
+
+      // перемещаем НЛО в конец линии
 
       // спустя 3 секунды запускаем и звёзды, и «покачивание» НЛО
       setTimeout(() => {
@@ -112,7 +113,7 @@ watch(
     } else {
       // сброс при закрытии
       lineComp.value?.$el.classList.remove('show')
-      ufoPos.value = { top: -999, left: -999 }
+      ufoPos.value = { top: 200, left: -999 }
       ufoBob.value = false
     }
   },
@@ -126,12 +127,18 @@ watch(
     :class="{ show: props.status, bob: ufoBob }"
     src="@/shared/assets/icons/crash-ufo.png"
     alt="ufo"
-    :style="{ top: `${ufoPos.top}px`, left: `${ufoPos.left - 50}px` }"
+    :style="{ top: `${ufoPos.top - 20}px`, left: `${ufoPos.left - 60}px` }"
   />
   <div class="chart-wrapper" ref="wrapper">
+    <div :class="['start-view', { show: status }]">
+      Поставь ставку и поймай <br /><span>большой</span> коэффициент
+    </div>
+    <div :class="['rule', 'rule-x', { show: status }]"></div>
+    <div :class="['rule', 'rule-y', { show: status }]"></div>
     <LineIcon ref="lineComp" class="line" />
-
-    <!-- контейнер для звёзд -->
+    <div :class="['x-wrapper', { show: status }]">
+      <slot />
+    </div>
     <div class="stars">
       <svg
         v-for="star in stars"
@@ -159,7 +166,6 @@ watch(
 .chart-wrapper {
   height: 200px;
   position: relative;
-  overflow: hidden;
 
   .line {
     opacity: 1;
@@ -169,11 +175,83 @@ watch(
     left: 0;
     width: 0%;
     height: 0;
+    margin: 10px;
 
     &.show {
       width: 80%;
       height: auto;
     }
+  }
+}
+
+.start-view {
+  opacity: 1;
+  transition: all 0.5s;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 20px 0;
+  border-top: 2px solid #273cf9;
+  border-bottom: 2px solid #273cf9;
+  right: 0;
+  left: 0;
+  text-align: center;
+  font-weight: 900;
+  font-size: 20px;
+  line-height: 24px;
+  span {
+    color: #273cf9;
+  }
+
+  &.show {
+    opacity: 0;
+    padding: 100px 0;
+  }
+}
+
+.x-wrapper {
+  opacity: 0;
+  transition: all 0.3s;
+
+  &.show {
+    opacity: 1;
+  }
+}
+
+.rule {
+  opacity: 0;
+  transition: all 0.3s;
+  &.show {
+    opacity: 0.6;
+  }
+}
+
+.rule-y {
+  position: absolute;
+  bottom: -0px;
+  left: 0px;
+  width: 10px;
+  height: 100%;
+  background-image: url('@/shared/assets/icons/rule.svg');
+  background-repeat: repeat-y;
+  animation: scroll-rule 3s linear infinite;
+  border-right: 1px solid #1c254a;
+}
+
+.rule-x {
+  position: absolute;
+  bottom: -0px;
+  left: -20px;
+  width: 100%;
+  height: 10px;
+  background-image: url('@/shared/assets/icons/rule-x.svg');
+  animation: scroll-rule-x 3s linear infinite;
+  border-top: 1px solid #1c254a;
+  background-repeat: repeat-x;
+  background-position-y: 3px;
+  transition: all 0.3s;
+  &.show {
+    left: 10px;
   }
 }
 
@@ -227,6 +305,23 @@ watch(
   }
   50% {
     transform: translateY(-10px);
+  }
+}
+
+@keyframes scroll-rule {
+  0% {
+    background-position-y: 0;
+  }
+  100% {
+    background-position-y: 100%;
+  }
+}
+@keyframes scroll-rule-x {
+  0% {
+    background-position-x: 0;
+  }
+  100% {
+    background-position-x: 100%;
   }
 }
 </style>
