@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { ref, onMounted, watch, nextTick } from 'vue'
 import LineIcon from '../assets/line.svg'
-import type { VueInstance } from '@vueuse/core'
 
 const props = defineProps<{ status: boolean }>()
 
@@ -125,7 +124,7 @@ watch(
   <img
     class="ufo"
     :class="{ show: props.status, bob: ufoBob }"
-    src="../assets/rocket.svg"
+    src="../assets/rocket.png"
     alt="ufo"
     :style="{ top: `${ufoPos.top - 50}px`, left: `${ufoPos.left - 60}px` }"
   />
