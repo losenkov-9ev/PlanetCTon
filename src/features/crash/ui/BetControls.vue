@@ -87,6 +87,7 @@ watch(amount, (val) => emit('update:amount', parseFloat(val.toFixed(1))))
       height: 32px;
       border-radius: 4px;
       background-color: var(--accent);
+      color: #0b0d23;
       font-size: 16px;
       display: flex;
       justify-content: center;
