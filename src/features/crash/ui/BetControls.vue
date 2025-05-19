@@ -1,38 +1,3 @@
-<template>
-  <div class="bet-controls">
-    <div class="bet-box">
-      <div class="amount">
-        <button @click="$emit('update:amount', (amount -= 0.1))">-</button>
-        <UiInput
-          class="bet-input"
-          size="sm"
-          placeholder="0.1"
-          @input="(e) => $emit('update:amount', (amount = Number(e.target.value)))"
-          :value="amount.toFixed(2)"
-          min="0.1"
-          type="number"
-          step="0.1"
-          :custom="{ type: 'icon' }"
-        >
-          <div style="width: 20px; height: 20px">
-            <TonIcon />
-          </div>
-        </UiInput>
-        <button @click="$emit('update:amount', (amount += 0.1))">+</button>
-      </div>
-      <div class="add-buttons">
-        <button @click="$emit('update:amount', (amount += 0.1))">+0.1</button>
-        <button @click="$emit('update:amount', (amount += 0.5))">+0.5</button>
-        <button @click="$emit('update:amount', (amount += 1))">+1</button>
-        <button @click="$emit('update:amount', (amount += 10))">+10</button>
-        <button @click="$emit('update:amount', (amount += 100))">+100</button>
-      </div>
-    </div>
-
-    <UiButton :disabled="status" color="yellow" @click="$emit('bet')">Ставка</UiButton>
-  </div>
-</template>
-
 <script lang="ts" setup>
 import { ref, watch, defineEmits, defineProps } from 'vue'
 import UiButton from '@/shared/ui/UiButton.vue'
@@ -43,13 +8,75 @@ type Props = {
   amount: number
   status: boolean
 }
+
 const props = defineProps<Props>()
 const emit = defineEmits(['update:amount', 'bet'])
 
 const amount = ref(props.amount)
 
-watch(amount, (val) => emit('update:amount', parseFloat(val.toFixed(1))))
+watch(amount, (val) => emit('update:amount', parseFloat(val.toFixed(2))))
+
+function decrementAmount() {
+  if (amount.value > 0.1) {
+    amount.value = parseFloat((amount.value - 0.1).toFixed(2))
+  }
+}
+
+function incrementAmount() {
+  amount.value = parseFloat((amount.value + 0.1).toFixed(2))
+}
+
+function onInput(e: Event) {
+  const inputValue = parseFloat((e.target as HTMLInputElement).value)
+  if (inputValue >= 0.1) {
+    amount.value = inputValue
+  } else {
+    ;(e.target as HTMLInputElement).value = amount.value.toFixed(2)
+  }
+}
+
+function addAmount(value: number) {
+  amount.value = parseFloat((amount.value + value).toFixed(2))
+}
 </script>
+
+<template>
+  <div class="bet-controls">
+    <div class="bet-box">
+      <div class="amount">
+        <button @click="decrementAmount" :disabled="amount <= 0.1">-</button>
+
+        <UiInput
+          class="bet-input"
+          size="sm"
+          placeholder="0.1"
+          @input="onInput"
+          :value="amount.toFixed(2)"
+          min="0.1"
+          type="number"
+          step="0.1"
+          :custom="{ type: 'icon' }"
+        >
+          <div style="width: 20px; height: 20px">
+            <TonIcon />
+          </div>
+        </UiInput>
+
+        <button @click="incrementAmount">+</button>
+      </div>
+
+      <div class="add-buttons">
+        <button @click="addAmount(0.1)">+0.1</button>
+        <button @click="addAmount(0.5)">+0.5</button>
+        <button @click="addAmount(1)">+1</button>
+        <button @click="addAmount(10)">+10</button>
+        <button @click="addAmount(100)">+100</button>
+      </div>
+    </div>
+
+    <UiButton :disabled="status" color="yellow" @click="$emit('bet')"> Ставка </UiButton>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .bet-controls {
@@ -94,6 +121,10 @@ watch(amount, (val) => emit('update:amount', parseFloat(val.toFixed(1))))
       align-items: center;
       font-weight: 700;
       flex: none;
+
+      &:disabled {
+        opacity: 0.4;
+      }
     }
     .x-input {
       max-width: 70px;
