@@ -39,7 +39,7 @@
       </div>
     </div>
 
-    <UiButton :disabled="status" @click="$emit('bet')">Ставка</UiButton>
+    <UiButton :disabled="status" color="yellow" @click="$emit('bet')">Ставка</UiButton>
   </div>
 </template>
 
@@ -66,7 +66,7 @@ watch(amount, (val) => emit('update:amount', parseFloat(val.toFixed(1))))
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 32px;
   margin-top: 0px;
   padding-top: 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -107,6 +107,7 @@ watch(amount, (val) => emit('update:amount', parseFloat(val.toFixed(1))))
     }
     .x-input {
       max-width: 70px;
+      width: 100%;
       margin-left: 10px;
     }
     .bet-input {

@@ -25,7 +25,7 @@ const handleConnectWalletClick = () => {
     <div class="home-header">
       <button @click="handleButtonClick" class="faq-button"><FaqIcon /> FAQ</button>
       <UiButton @click="handleConnectWalletClick" class="home-header-button" size="sm" color="blue">
-        <TonIcon />Connect Wallet
+        <TonIcon class="icon" />Connect Wallet
       </UiButton>
       <LanguageSelect />
     </div>
@@ -50,6 +50,12 @@ const handleConnectWalletClick = () => {
     color: var(--font);
     text-align: center;
     border-radius: 10px;
+    white-space: nowrap;
+
+    .icon {
+      width: 24px;
+      height: 24px;
+    }
   }
 
   .faq-button {
