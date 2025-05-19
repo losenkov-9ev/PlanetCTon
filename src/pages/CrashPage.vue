@@ -38,12 +38,14 @@ onUnmounted(() => {
 
 <template>
   <div class="page crash-page">
-    <div class="title title-1">Crash</div>
-    <div class="crash-wrapper">
-      <CrashChart :status="isGame">
-        <div class="current-multiplier">x{{ currentMultiplier.toFixed(2) }}</div>
-      </CrashChart>
-      <BetControls v-model:amount="betAmount" @bet="placeBet" :status="isGame" />
+    <div class="page-wrapper">
+      <div class="title title-1">Crash</div>
+      <div class="crash-wrapper">
+        <CrashChart :status="isGame">
+          <div class="current-multiplier">x{{ currentMultiplier.toFixed(2) }}</div>
+        </CrashChart>
+        <BetControls v-model:amount="betAmount" @bet="placeBet" :status="isGame" />
+      </div>
     </div>
   </div>
 </template>
