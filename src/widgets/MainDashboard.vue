@@ -16,7 +16,7 @@ const handleButtonClick = () => {
 }
 
 const handleConnectWalletClick = () => {
-  router.push(AppRoutes.CRASH)
+  router.push(AppRoutes.COIN_FLIP)
 }
 </script>
 
