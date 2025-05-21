@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import axios from 'axios'
 import UiButton from '@/shared/ui/UiButton.vue'
 import UiInput from '@/shared/ui/UiInput.vue'
 import TonIcon from '@/shared/assets/icons/ton.svg'
+import CoinFlipDialog from '@/features/dialogs/CoinFlipDialog.vue'
 
 const rotating = ref(false)
 const selectedSide = ref<number>(1)
 const coinEl = ref<HTMLElement | null>(null)
 const win = ref(false)
 const showResult = ref(false)
+const modalText = ref<string>('')
 let baseRotation = 0
 
 const startFlip = async () => {
@@ -31,8 +33,11 @@ const startFlip = async () => {
   setTimeout(() => {
     rotating.value = false
     win.value = data.flip === selectedSide.value
-    showResult.value = true
-    setTimeout(() => (showResult.value = false), 2500)
+    setTimeout(() => {
+      showResult.value = true
+    }, 500)
+
+    modalText.value = win.value ? 'Вы выиграли!' : 'Увы, не повезло...'
   }, 2600)
 }
 </script>
@@ -70,11 +75,9 @@ const startFlip = async () => {
         </div>
 
         <UiButton color="yellow" @click="startFlip" :disabled="rotating">Крутить</UiButton>
-        <div v-if="showResult" :class="win ? 'result-win' : 'result-lose'">
-          {{ win ? 'Вы выиграли!' : 'Увы, не повезло...' }}
-        </div>
       </div>
     </div>
+    <CoinFlipDialog v-model="showResult" :text="modalText" :status="win ? 'win' : 'lose'" />
   </div>
 </template>
 
@@ -86,12 +89,11 @@ const startFlip = async () => {
   background: rgba(18, 20, 30, 0.8);
   border: 1px solid #2a2e44;
   border-radius: 16px;
-  padding: 24px 20px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 340px;
   margin-inline: auto;
   backdrop-filter: blur(12px);
   position: relative;
@@ -250,27 +252,5 @@ const startFlip = async () => {
 .coin-bet-icon {
   width: 24px;
   height: 24px;
-}
-
-.result-win,
-.result-lose {
-  margin-top: 12px;
-  font-weight: 600;
-  font-size: 16px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  backdrop-filter: blur(4px);
-  text-align: center;
-  transition: all 0.3s;
-}
-
-.result-win {
-  background: rgba(50, 255, 150, 0.08);
-  color: #7fffcc;
-}
-
-.result-lose {
-  background: rgba(255, 80, 80, 0.08);
-  color: #ff9f9f;
 }
 </style>
