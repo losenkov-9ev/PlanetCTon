@@ -33,9 +33,7 @@ const startFlip = async () => {
   setTimeout(() => {
     rotating.value = false
     win.value = data.flip === selectedSide.value
-    setTimeout(() => {
-      showResult.value = true
-    }, 500)
+    showResult.value = true
 
     modalText.value = win.value ? 'Вы выиграли!' : 'Увы, не повезло...'
   }, 2600)
